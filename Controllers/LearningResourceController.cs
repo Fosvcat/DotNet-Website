@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Geekspace.Data;
 using Geekspace.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Geekspace.Controllers
 {
@@ -15,10 +16,12 @@ namespace Geekspace.Controllers
     public class LearningResourceController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public LearningResourceController(ApplicationDbContext context)
+        public LearningResourceController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: LearningResource
@@ -132,6 +135,21 @@ namespace Geekspace.Controllers
             .Where(u => userIds.Contains(u.Id))
             .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown");
             ViewBag.CommentAuthors = authorNames;
+
+            // Build a set of user IDs that belong to Root accounts, so the view
+            // can hide the Delete button from Admins looking at a Root's comment
+            // (the server-side check in CommentController is the real enforcement;
+            // this just avoids showing a button that would be rejected anyway).
+            var rootUserIds = new HashSet<string>();
+            foreach (var uid in userIds)
+            {
+                var u = await _userManager.FindByIdAsync(uid);
+                if (u != null && await _userManager.IsInRoleAsync(u, "Root"))
+                {
+                    rootUserIds.Add(uid);
+                }
+            }
+            ViewBag.RootUserIds = rootUserIds;
 
             return View(learningResource);
         }

@@ -69,9 +69,35 @@ namespace Geekspace.Controllers
 
             var currentUserId = _userManager.GetUserId(User);
             bool isOwner = comment.UserId == currentUserId;
-            bool isAdmin = User.IsInRole("Admin") || User.IsInRole("Root");
+            bool isCurrentRoot = User.IsInRole("Root");
+            bool isCurrentAdmin = User.IsInRole("Admin");
 
-            if (!isOwner && !isAdmin)
+            bool allowed;
+
+            if (isOwner)
+            {
+                // Anyone may delete their own comment, regardless of role.
+                allowed = true;
+            }
+            else if (isCurrentRoot)
+            {
+                // Root may delete any comment from anyone, including other Root or Admin accounts.
+                allowed = true;
+            }
+            else if (isCurrentAdmin)
+            {
+                // Admin may delete anyone's comment EXCEPT a comment posted by a Root account.
+                var commentAuthor = await _userManager.FindByIdAsync(comment.UserId);
+                bool authorIsRoot = commentAuthor != null && await _userManager.IsInRoleAsync(commentAuthor, "Root");
+                allowed = !authorIsRoot;
+            }
+            else
+            {
+                // Plain users may only delete their own comments (handled by isOwner above).
+                allowed = false;
+            }
+
+            if (!allowed)
             {
                 return Forbid();
             }

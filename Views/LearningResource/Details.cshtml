@@ -129,8 +129,15 @@ else
                 on @comment.PostedDate.ToString("g")
             </small>
 
-            @if (User.Identity != null && User.Identity.IsAuthenticated &&
-                 (User.IsInRole("Admin") || comment.UserId == currentUserId))
+@{
+    var rootUserIds = ViewBag.RootUserIds as HashSet<string> ?? new HashSet<string>();
+    bool commentAuthorIsRoot = rootUserIds.Contains(comment.UserId);
+    bool canDeleteThisComment = comment.UserId == currentUserId ||
+                                 User.IsInRole("Root") ||
+                                 (User.IsInRole("Admin") && !commentAuthorIsRoot);
+}
+@if (User.Identity != null && User.Identity.IsAuthenticated && canDeleteThisComment)
+
             {
                 <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline">
                     @Html.AntiForgeryToken()
