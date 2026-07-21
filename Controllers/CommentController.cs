@@ -63,7 +63,7 @@ namespace Geekspace.Controllers
 
             var currentUserId = _userManager.GetUserId(User);
             bool isOwner = comment.UserId == currentUserId;
-            bool isAdmin = User.IsInRole("Admin");
+            bool isAdmin = User.IsInRole("Admin") || User.IsInRole("Root");
 
             if (!isOwner && !isAdmin)
             {

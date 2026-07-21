@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Geekspace.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin,Root")]
     public class CategoryController : Controller
     {
         private readonly ApplicationDbContext _context;

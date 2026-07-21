@@ -7835,11 +7835,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/home/fosvcat/Projects/Geekspace/Geekspace.csproj",
+      "projectUniqueName": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
       "projectName": "Geekspace",
-      "projectPath": "/home/fosvcat/Projects/Geekspace/Geekspace.csproj",
+      "projectPath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
       "packagesPath": "/home/fosvcat/.nuget/packages/",
-      "outputPath": "/home/fosvcat/Projects/Geekspace/obj/",
+      "outputPath": "/home/fosvcat/Project/GitHub/DotNet-Website/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/home/fosvcat/.nuget/NuGet/NuGet.Config"

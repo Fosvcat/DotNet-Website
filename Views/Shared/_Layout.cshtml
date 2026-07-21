@@ -26,12 +26,15 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="LearningResource" asp-action="Index">Resources</a>
                             </li>
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Manage Categories</a>
-                                </li>
-                            }
+                                @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+                                {
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Manage Categories</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link text-dark" asp-area="" asp-controller="UserManagement" asp-action="Index">Manage Users</a>
+                                    </li>
+                                }
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>

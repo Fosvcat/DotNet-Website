@@ -45,31 +45,39 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
-   // Seed the Admin role and promote a designated account to Admin
+   // Seed the Root and Admin roles and promote the designated accounts.
    using (var scope = app.Services.CreateScope())
    {
-       await SeedAdminRoleAsync(scope.ServiceProvider);
+       await SeedRolesAsync(scope.ServiceProvider);
    }
-
    app.Run();
 
-   // Local function: creates the Admin role if missing, and promotes
-   // the specified email address to Admin on every application startup.
-   static async Task SeedAdminRoleAsync(IServiceProvider services)
+   // Local function: creates the Root and Admin roles if missing, and
+   // promotes the specified email addresses on every application startup.
+   // Safe to run repeatedly — it only adds a role if the account doesn't
+   // already have it.
+   static async Task SeedRolesAsync(IServiceProvider services)
    {
        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
        var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
 
-       const string adminRole = "Admin";
-       if (!await roleManager.RoleExistsAsync(adminRole))
+       foreach (var role in new[] { "Root", "Admin" })
        {
-           await roleManager.CreateAsync(new IdentityRole(adminRole));
+           if (!await roleManager.RoleExistsAsync(role))
+           {
+               await roleManager.CreateAsync(new IdentityRole(role));
+           }
        }
 
-       const string adminEmail = "admin@fosvcat.com";
-       var adminUser = await userManager.FindByEmailAsync(adminEmail);
-       if (adminUser != null && !await userManager.IsInRoleAsync(adminUser, adminRole))
+       await PromoteIfExistsAsync(userManager, "root@fosvcat.com", "Root");
+       await PromoteIfExistsAsync(userManager, "admin@fosvcat.com", "Admin");
+   }
+
+   static async Task PromoteIfExistsAsync(UserManager<IdentityUser> userManager, string email, string role)
+   {
+       var user = await userManager.FindByEmailAsync(email);
+       if (user != null && !await userManager.IsInRoleAsync(user, role))
        {
-           await userManager.AddToRoleAsync(adminUser, adminRole);
+           await userManager.AddToRoleAsync(user, role);
        }
    }

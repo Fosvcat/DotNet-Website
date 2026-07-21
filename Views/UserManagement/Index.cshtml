@@ -1,0 +1,65 @@
+@model List<Geekspace.ViewModels.UserListItem>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+<h1>Manage Users</h1>
+
+@if (TempData["UserManagementError"] != null)
+{
+    <div class="alert alert-danger">@TempData["UserManagementError"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var u in Model)
+        {
+            <tr>
+                <td>@u.Email</td>
+                <td>
+                    <span class="badge @(u.Role == "Root" ? "bg-danger" : u.Role == "Admin" ? "bg-warning text-dark" : "bg-secondary")">
+                        @u.Role
+                    </span>
+                </td>
+                <td>
+                    @if (u.Role == "User")
+                    {
+                        <form asp-action="PromoteToAdmin" asp-route-id="@u.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-success">Promote to Admin</button>
+                        </form>
+                    }
+
+                    @if (u.Role == "Admin" && User.IsInRole("Root"))
+                    {
+                        <form asp-action="DemoteToUser" asp-route-id="@u.Id" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-warning">Demote to User</button>
+                        </form>
+                    }
+
+                    @{
+                        bool canDelete = u.Role != "Root" &&
+                            (User.IsInRole("Root") || (User.IsInRole("Admin") && u.Role == "User"));
+                    }
+                    @if (canDelete)
+                    {
+                        <form asp-action="Delete" asp-route-id="@u.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Delete this account? This cannot be undone.');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
