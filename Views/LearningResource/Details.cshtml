@@ -1,0 +1,114 @@
+@model Geekspace.Models.LearningResource
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>LearningResource</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.MediaUrl)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.MediaUrl)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsPublished)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsPublished)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+<hr />
+<h3>Discussion (@Model.Comments.Count())</h3>
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="learningResourceId" value="@Model.Id" />
+        <div class="form-group">
+            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+}
+
+@{
+    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string>;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+@foreach (var comment in Model.Comments.OrderByDescending(c => c.PostedDate))
+{
+    <div class="card mb-2">
+        <div class="card-body">
+            <p class="card-text">@comment.Content</p>
+            <small class="text-muted">
+                Posted by @(commentAuthors != null && commentAuthors.ContainsKey(comment.UserId) ? commentAuthors[comment.UserId] : "Unknown")
+                on @comment.PostedDate.ToString("g")
+            </small>
+
+            @if (User.Identity != null && User.Identity.IsAuthenticated &&
+                 (User.IsInRole("Admin") || comment.UserId == currentUserId))
+            {
+                <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            }
+        </div>
+    </div>
+}
