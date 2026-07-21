@@ -1,14 +1,34 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Geekspace.Models;
+using Geekspace.Data;
 
 namespace Geekspace.Controllers;
 
 public class HomeController : Controller
 {
-    public IActionResult Index()
+    private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _context;
+
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context)
     {
-        return View();
+        _logger = logger;
+        _context = context;
+    }
+
+    // GET: / — shows the newest published resources on the landing page.
+    public async Task<IActionResult> Index()
+    {
+        var latestResources = await _context.LearningResources
+        .Include(r => r.Category)
+        .Where(r => r.IsPublished)
+        .OrderByDescending(r => r.CreatedDate)
+        .Take(6)
+        .ToListAsync();
+
+        return View(latestResources);
     }
 
     public IActionResult Privacy()

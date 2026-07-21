@@ -34,6 +34,12 @@ namespace Geekspace.Controllers
                 return RedirectToAction("Details", "LearningResource", new { id = learningResourceId });
             }
 
+            if (content.Length > 1000)
+            {
+                TempData["CommentError"] = "Comment cannot exceed 1000 characters.";
+                return RedirectToAction("Details", "LearningResource", new { id = learningResourceId });
+            }
+
             var userId = _userManager.GetUserId(User);
 
             var comment = new ResourceComment

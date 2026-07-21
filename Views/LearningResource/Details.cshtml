@@ -35,11 +35,34 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Type)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MediaUrl)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MediaUrl)
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+            {
+                var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
+                var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+
+                if (videoExtensions.Contains(extension))
+                {
+                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
+                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else
+                {
+                    <figure class="figure">
+                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
+                        <figcaption class="figure-caption">@Model.Title</figcaption>
+                    </figure>
+                }
+            }
+            else
+            {
+                <span class="text-muted">No media attached.</span>
+            }
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Category)
@@ -69,6 +92,11 @@
 
 <hr />
 <h3>Discussion (@Model.Comments.Count())</h3>
+
+@if (TempData["CommentError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CommentError"]</div>
+}
 
 @if (User.Identity != null && User.Identity.IsAuthenticated)
 {

@@ -27,12 +27,14 @@ namespace Geekspace.Models
 
         [Display(Name = "Content")]
         [DataType(DataType.MultilineText)]
+        [StringLength(10000, ErrorMessage = "Content cannot exceed 10,000 characters.")]
         public string? Content { get; set; }
 
         [Display(Name = "Resource Type")]
         public ResourceType Type { get; set; }
 
-        [Display(Name = "Media file path")]
+        [Display(Name = "Media File Path")]
+        [StringLength(300)]
         public string? MediaUrl { get; set; }
 
         [Display(Name = "Category")]

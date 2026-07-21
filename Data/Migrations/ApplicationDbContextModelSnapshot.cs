@@ -47,6 +47,7 @@ namespace Geekspace.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Content")
+                        .HasMaxLength(10000)
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedDate")
@@ -61,6 +62,7 @@ namespace Geekspace.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("MediaUrl")
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Title")

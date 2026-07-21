@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "M3K4jajutgU=",
+  "dgSpecHash": "mgFJEKZSVQw=",
   "success": true,
-  "projectFilePath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
+  "projectFilePath": "/home/fosvcat/Projects/GitHub/DotNet-Website/Geekspace.csproj",
   "expectedPackageFiles": [
     "/home/fosvcat/.nuget/packages/azure.core/1.47.1/azure.core.1.47.1.nupkg.sha512",
     "/home/fosvcat/.nuget/packages/azure.identity/1.14.2/azure.identity.1.14.2.nupkg.sha512",
@@ -167,9 +167,9 @@
       "code": "NU1901",
       "level": "Warning",
       "message": "包 \"NuGet.Packaging\" 6.12.1 具有已知的 低 严重性漏洞，https://github.com/advisories/GHSA-g4vj-cjjj-v7hg",
-      "projectPath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
+      "projectPath": "/home/fosvcat/Projects/GitHub/DotNet-Website/Geekspace.csproj",
       "warningLevel": 1,
-      "filePath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
+      "filePath": "/home/fosvcat/Projects/GitHub/DotNet-Website/Geekspace.csproj",
       "libraryId": "NuGet.Packaging",
       "targetGraphs": [
         "net10.0"
@@ -179,9 +179,9 @@
       "code": "NU1901",
       "level": "Warning",
       "message": "包 \"NuGet.Protocol\" 6.12.1 具有已知的 低 严重性漏洞，https://github.com/advisories/GHSA-g4vj-cjjj-v7hg",
-      "projectPath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
+      "projectPath": "/home/fosvcat/Projects/GitHub/DotNet-Website/Geekspace.csproj",
       "warningLevel": 1,
-      "filePath": "/home/fosvcat/Project/GitHub/DotNet-Website/Geekspace.csproj",
+      "filePath": "/home/fosvcat/Projects/GitHub/DotNet-Website/Geekspace.csproj",
       "libraryId": "NuGet.Protocol",
       "targetGraphs": [
         "net10.0"

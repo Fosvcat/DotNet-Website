@@ -34,7 +34,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="MediaUrl" class="control-label"></label>
-                <input asp-for="MediaUrl" class="form-control" />
+                <input asp-for="MediaUrl" class="form-control" placeholder="/media/videos/example.mp4 or /media/images/example.jpg" />
+                <small style="color:#6c757d;">Enter a relative path under wwwroot, e.g. /media/images/ctf-banner.jpg</small>
                 <span asp-validation-for="MediaUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
