@@ -1,0 +1,29 @@
+@page
+@model TwoFactorAuthenticationModel
+@{
+    ViewData["Title"] = "TOTP authentication";
+    ViewData["ActivePage"] = ManageNavPages.TwoFactorAuthentication;
+}
+
+<h4>@ViewData["Title"]</h4>
+<partial name="_StatusMessage" for="StatusMessage" />
+@if (Model.Is2faEnabled)
+{
+    if (Model.IsMachineRemembered)
+    {
+        <form method="post" style="display: inline-block">
+            <button type="submit" class="btn btn-primary">Forget this browser</button>
+        </form>
+    }
+    <a asp-page="./Disable2fa" class="btn btn-primary">Disable 2FA</a>
+}
+<p>
+    <a asp-page="./EnableAuthenticator" class="btn btn-primary">Configure authenticator app</a>
+</p>
+<p>
+    <a asp-page="./ResetAuthenticator" class="btn btn-primary">Reset authenticator key</a>
+</p>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
