@@ -24,4 +24,9 @@
     <PackageReference Include="SQLitePCLRaw.bundle_e_sqlite3" Version="3.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Areas\Identity\Pages\Account\Manage\*.cshtml" />
+    <Content Include="Areas\Identity\Pages\_ViewImports.cshtml" />
+  </ItemGroup>
+
 </Project>
