@@ -25,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Areas\Identity\Pages\Account\Manage\*.cshtml" />
-    <Content Include="Areas\Identity\Pages\_ViewImports.cshtml" />
+    <Content Include="Areas\Identity\Pages\**\*.cshtml" />
+    <Content Include="Areas\Identity\Pages\**\*.cs" />
+    <Compile Include="Areas\Identity\Pages\**\*.cs" />
   </ItemGroup>
 
 </Project>
