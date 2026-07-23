@@ -1,31 +1,170 @@
-html {
-  font-size: 14px;
+/* ============================================
+ *  Geekspace - Custom Site Styles
+ *  Defines the light/dark color system and
+ *  general visual polish layered on top of
+ *  Bootstrap 5's utility classes.
+ *  ============================================ */
+
+:root,
+[data-bs-theme="light"] {
+  --gs-bg-body: #f4f6fb;
+  --gs-bg-surface: #ffffff;
+  --gs-bg-card: #ffffff;
+  --gs-text-primary: #1a1a2e;
+  --gs-text-muted: #6c757d;
+  --gs-border: #e2e5ec;
+  --gs-accent: #4361ee;
+  --gs-accent-hover: #3651d4;
+  --gs-hero-start: #4361ee;
+  --gs-hero-end: #3a0ca3;
+  --gs-shadow: rgba(20, 20, 40, 0.08);
+  --gs-shadow-hover: rgba(20, 20, 40, 0.15);
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+[data-bs-theme="dark"] {
+  --gs-bg-body: #0f0f1a;
+  --gs-bg-surface: #16213e;
+  --gs-bg-card: #1a1a2e;
+  --gs-text-primary: #e8e8f0;
+  --gs-text-muted: #9a9ab0;
+  --gs-border: #2a2a45;
+  --gs-accent: #4cc9f0;
+  --gs-accent-hover: #3ab4d9;
+  --gs-hero-start: #0f0f1a;
+  --gs-hero-end: #16213e;
+  --gs-shadow: rgba(0, 0, 0, 0.4);
+  --gs-shadow-hover: rgba(0, 0, 0, 0.6);
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+* {
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
-html {
-  position: relative;
-  min-height: 100%;
+html, body {
+  background-color: var(--gs-bg-body);
+  color: var(--gs-text-primary);
 }
 
 body {
-  margin-bottom: 60px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
-  color: var(--bs-secondary-color);
-  text-align: end;
+/* Navbar */
+.navbar {
+  background-color: var(--gs-bg-surface) !important;
+  border-bottom: 1px solid var(--gs-border);
+  box-shadow: 0 1px 3px var(--gs-shadow);
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
-  text-align: start;
+.navbar .nav-link {
+  color: var(--gs-text-primary) !important;
+}
+
+.navbar .nav-link:hover {
+  color: var(--gs-accent) !important;
+}
+
+.navbar-brand {
+  background: linear-gradient(135deg, #364ebe 0%, #2e0a82 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 700;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+  border: 1px solid var(--gs-border);
+  background-color: transparent;
+  border-radius: 999px;
+  width: 38px;
+  height: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--gs-border);
+}
+
+/* Cards */
+.card {
+  background-color: var(--gs-bg-card);
+  border: 1px solid var(--gs-border);
+  box-shadow: 0 2px 6px var(--gs-shadow);
+}
+
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 24px var(--gs-shadow-hover);
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: var(--gs-accent);
+  border-color: var(--gs-accent);
+}
+
+.btn-primary:hover {
+  background-color: var(--gs-accent-hover);
+  border-color: var(--gs-accent-hover);
+}
+
+.btn-outline-primary {
+  color: var(--gs-accent);
+  border-color: var(--gs-accent);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--gs-accent);
+  border-color: var(--gs-accent);
+  color: #fff;
+}
+
+/* Entrance animation for resource cards */
+@keyframes gs-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  animation: gs-fade-in-up 0.4s ease both;
+}
+
+/* Keyboard focus visibility (accessibility) */
+.btn:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.2rem var(--gs-accent);
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+body > .container {
+  flex: 1 0 auto;
+}
+
+footer {
+  flex-shrink: 0;
+  background-color: var(--gs-bg-surface);
+  border-top: 1px solid var(--gs-border);
+  color: var(--gs-text-muted);
+  padding: 1rem 0;
 }

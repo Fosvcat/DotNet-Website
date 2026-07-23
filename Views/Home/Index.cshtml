@@ -6,22 +6,18 @@
 
 <!-- Internal CSS: page-scoped styles for this view only -->
 <style>
-    .hero {
-        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-        color: #fff;
-        padding: 3rem 2rem;
-        border-radius: 8px;
-        margin-bottom: 2rem;
-    }
+.hero {
+    background: linear-gradient(135deg, var(--gs-hero-start) 0%, var(--gs-hero-end) 100%);
+    color: #fff;
+    padding: 3.5rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px var(--gs-shadow);
+}
 
-    .resource-card {
-        height: 100%;
-        transition: transform 0.15s ease-in-out;
-    }
-
-    .resource-card:hover {
-        transform: translateY(-4px);
-    }
+.resource-card {
+    height: 100%;
+}
 
     .type-badge {
         font-size: 0.75rem;
@@ -51,10 +47,11 @@
     else
     {
         <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach (var resource in Model)
+            @for (int i = 0; i < Model.Count; i++)
             {
+                var resource = Model[i];
                 <div class="col">
-                    <article class="card resource-card">
+                    <article class="card resource-card hover-lift fade-in-up" style="animation-delay: @(i * 0.06)s;">
                         @if (!string.IsNullOrWhiteSpace(resource.MediaUrl) &&
                              (resource.MediaUrl.EndsWith(".jpg") || resource.MediaUrl.EndsWith(".png") || resource.MediaUrl.EndsWith(".jpeg")))
                         {
@@ -70,9 +67,9 @@
                                 View Resource
                             </a>
                         </div>
-                        <footer class="card-footer text-muted small">
-                            Added @resource.CreatedDate.ToString("MMM d, yyyy")
-                        </footer>
+                            <footer class="card-footer text-muted small">
+                                Added @resource.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+                            </footer>
                     </article>
                 </div>
             }

@@ -1688,7 +1688,6 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nezrqnk58p-{0}-muycvpuwrr-muycvpuwrr.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/v0zgfp0y55-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/yfc7ypekbg-{0}-mlv21k5csn-mlv21k5csn.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nsns4u3rwy-{0}-lugek5hnai-lugek5hnai.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ta4ezbw913-{0}-61n19gt1b8-61n19gt1b8.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/q9kufuxq7s-{0}-fr7q2aak1r-fr7q2aak1r.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/seuwyad2ud-{0}-bqjiyaj88i-bqjiyaj88i.gz
@@ -1750,8 +1749,6 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/gfwbq2wfno-{0}-muycvpuwrr-muycvpuwrr.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/fewmfp783d-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/sc7jd4tfzj-{0}-jfsiqqwiad-jfsiqqwiad.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ulqszi6ld3-{0}-57l0d5uyzg-57l0d5uyzg.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/4pu6ueruru-{0}-57l0d5uyzg-57l0d5uyzg.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/staticwebassets.build.json
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/staticwebassets.build.json.cache
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/staticwebassets.development.json
@@ -1764,3 +1761,6 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/Geekspace.genruntimeconfig.cache
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/ref/Geekspace.dll
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/app.db
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nsns4u3rwy-{0}-pttxhevhu5-pttxhevhu5.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ulqszi6ld3-{0}-9ywpewdo71-9ywpewdo71.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/4pu6ueruru-{0}-9ywpewdo71-9ywpewdo71.gz
