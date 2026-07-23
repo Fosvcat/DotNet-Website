@@ -1,0 +1,77 @@
+@model List<Geekspace.Models.ResourceComment>
+
+@{
+    ViewData["Title"] = "Manage Activity";
+}
+
+<h1>Manage Activity</h1>
+
+@{
+    var isRoot = ViewBag.IsRoot as bool? ?? false;
+    var isAdmin = ViewBag.IsAdmin as bool? ?? false;
+    var userNames = ViewBag.UserNames as System.Collections.Generic.Dictionary<string, string> ?? new Dictionary<string, string>();
+    var canDeleteDict = ViewBag.CanDeleteDict as System.Collections.Generic.Dictionary<int, bool> ?? new Dictionary<int, bool>();
+}
+
+@if (!isRoot && !isAdmin)
+{
+    <p class="text-muted">Only your comments are displayed here.</p>
+}
+
+@if (!Model.Any())
+{
+    <p>You haven't posted any comments yet. Browse the <a asp-controller="Resource" asp-action="Index">resource library</a> to join a discussion.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>User</th>
+                <th>Resource</th>
+                <th>Comment</th>
+                <th>Posted</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var comment in Model)
+            {
+                var userName = userNames.ContainsKey(comment.UserId) ? userNames[comment.UserId] : "Deleted accounts";
+                var canDelete = canDeleteDict.ContainsKey(comment.Id) && canDeleteDict[comment.Id];
+                
+                <tr>
+                    <td>@userName</td>
+                    <td>
+                        @if (comment.LearningResource != null)
+                        {
+                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@comment.LearningResourceId">
+                                @comment.LearningResource.Title
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">(resource removed)</span>
+                        }
+                    </td>
+                    <td>@comment.Content</td>
+                    <td>@comment.PostedDate.ToString("g")</td>
+                    <td>
+                        @if (canDelete)
+                        {
+                            <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post"
+                                  onsubmit="return confirm('Delete this comment?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        }
+                        else if (!isRoot && !isAdmin)
+                        {
+                            <span class="text-muted">-</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -31,13 +31,13 @@ namespace Geekspace.Controllers
             if (string.IsNullOrWhiteSpace(content))
             {
                 TempData["CommentError"] = "Comment cannot be empty.";
-                return RedirectToAction("Details", "LearningResource", new { id = learningResourceId });
+                return RedirectToAction("Details", "Resource", new { id = learningResourceId });
             }
 
             if (content.Length > 1000)
             {
                 TempData["CommentError"] = "Comment cannot exceed 1000 characters.";
-                return RedirectToAction("Details", "LearningResource", new { id = learningResourceId });
+                return RedirectToAction("Details", "Resource", new { id = learningResourceId });
             }
 
             var userId = _userManager.GetUserId(User);
@@ -53,7 +53,7 @@ namespace Geekspace.Controllers
             _context.ResourceComments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", "LearningResource", new { id = learningResourceId });
+            return RedirectToAction("Details", "Resource", new { id = learningResourceId });
         }
 
         // POST: Comment/Delete/5
@@ -106,7 +106,7 @@ namespace Geekspace.Controllers
             _context.ResourceComments.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", "LearningResource", new { id = resourceId });
+            return RedirectToAction("Details", "Resource", new { id = resourceId });
         }
     }
 }
