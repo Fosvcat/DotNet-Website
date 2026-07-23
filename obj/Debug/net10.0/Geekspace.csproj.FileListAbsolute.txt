@@ -1324,7 +1324,6 @@
 /home/fosvcat/Project/GitHub/DotNet-Website/obj/Debug/net10.0/ref/Geekspace.dll
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/appsettings.Development.json
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/appsettings.json
-/home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/app.db
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/Geekspace.staticwebassets.runtime.json
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/Geekspace.staticwebassets.endpoints.json
 /home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/Geekspace
@@ -1764,3 +1763,4 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/Geekspace.pdb
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/Geekspace.genruntimeconfig.cache
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/ref/Geekspace.dll
+/home/fosvcat/Projects/GitHub/DotNet-Website/bin/Debug/net10.0/app.db
