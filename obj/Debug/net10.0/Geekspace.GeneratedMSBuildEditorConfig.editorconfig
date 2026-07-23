@@ -34,6 +34,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = QXJlYXMvSWRlbnRpdHkvUGFnZXMvX1ZpZXdTdGFydC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Activity/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQWN0aXZpdHkvSW5kZXguY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Category/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvQ2F0ZWdvcnkvQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -62,28 +66,24 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/LearningResource/Create.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhcm5pbmdSZXNvdXJjZS9DcmVhdGUuY3NodG1s
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/LearningResource/Delete.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhcm5pbmdSZXNvdXJjZS9EZWxldGUuY3NodG1s
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Delete.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvRGVsZXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/LearningResource/Details.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhcm5pbmdSZXNvdXJjZS9EZXRhaWxzLmNzaHRtbA==
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvRGV0YWlscy5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/LearningResource/Edit.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhcm5pbmdSZXNvdXJjZS9FZGl0LmNzaHRtbA==
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvRWRpdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/LearningResource/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTGVhcm5pbmdSZXNvdXJjZS9JbmRleC5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/MyActivity/Index.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTXlBY3Rpdml0eS9JbmRleC5jc2h0bWw=
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvSW5kZXguY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Shared/Error.cshtml]
