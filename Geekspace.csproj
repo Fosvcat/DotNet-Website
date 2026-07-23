@@ -26,8 +26,6 @@
 
   <ItemGroup>
     <Content Include="Areas\Identity\Pages\**\*.cshtml" />
-    <Content Include="Areas\Identity\Pages\**\*.cs" />
-    <Compile Include="Areas\Identity\Pages\**\*.cs" />
   </ItemGroup>
 
 </Project>
