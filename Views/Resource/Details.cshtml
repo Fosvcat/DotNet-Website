@@ -1,0 +1,152 @@
+@model Geekspace.Models.LearningResource
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>LearningResource</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Content)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Type)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Type)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.MediaUrl)
+        </dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+            {
+                var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
+                var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+
+                if (videoExtensions.Contains(extension))
+                {
+                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
+                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else
+                {
+                    <figure class="figure">
+                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
+                        <figcaption class="figure-caption">@Model.Title</figcaption>
+                    </figure>
+                }
+            }
+            else
+            {
+                <span class="text-muted">No media attached.</span>
+            }
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Category)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CreatedDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.IsPublished)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.IsPublished)
+        </dd>
+    </dl>
+</div>
+<div>
+    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> <text> | </text>
+    }
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+<hr />
+<h3>Discussion (@Model.Comments.Count())</h3>
+
+@if (TempData["CommentError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CommentError"]</div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="learningResourceId" value="@Model.Id" />
+        <div class="form-group">
+            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+}
+
+@{
+    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string>;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+}
+
+@foreach (var comment in Model.Comments.OrderByDescending(c => c.PostedDate))
+{
+    <div class="card mb-2">
+        <div class="card-body">
+            <p class="card-text">@comment.Content</p>
+            <small class="text-muted">
+                Posted by @(commentAuthors != null && commentAuthors.ContainsKey(comment.UserId) ? commentAuthors[comment.UserId] : "Unknown")
+                on @comment.PostedDate.ToString("g")
+            </small>
+
+@{
+    var rootUserIds = ViewBag.RootUserIds as HashSet<string> ?? new HashSet<string>();
+    bool commentAuthorIsRoot = rootUserIds.Contains(comment.UserId);
+    bool canDeleteThisComment = comment.UserId == currentUserId ||
+                                 User.IsInRole("Root") ||
+                                 (User.IsInRole("Admin") && !commentAuthorIsRoot);
+}
+@if (User.Identity != null && User.Identity.IsAuthenticated && canDeleteThisComment)
+
+            {
+                <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                </form>
+            }
+        </div>
+    </div>
+}

@@ -32,7 +32,7 @@
     <p class="lead" style="opacity:0.85;">
         A learning hub for cybersecurity, CTF challenges, and hands-on tech skills.
     </p>
-    <a asp-controller="LearningResource" asp-action="Index" class="btn btn-light btn-lg mt-2">
+    <a asp-controller="Resource" asp-action="Index" class="btn btn-light btn-lg mt-2">
         Browse All Resources
     </a>
 </header>
@@ -62,7 +62,7 @@
                             <h3 class="h5 card-title">@resource.Title</h3>
                             <p class="card-text text-muted small">@resource.Category?.Name</p>
                             <p class="card-text">@resource.Description</p>
-                            <a asp-controller="LearningResource" asp-action="Details" asp-route-id="@resource.Id"
+                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id"
                                class="btn btn-outline-primary mt-auto">
                                 View Resource
                             </a>
