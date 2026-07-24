@@ -9,6 +9,7 @@
     })();
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="view-transition" content="same-origin" />
     <title>@ViewData["Title"] - Geekspace</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -92,6 +93,13 @@
                     Math.max(y, window.innerHeight - y)
                 );
 
+                // Disable all CSS color transitions for the duration of the
+                // theme switch. Without this, elements with their own
+                // background/color transitions (cards, etc.) can be
+                // snapshotted mid-fade by the browser, which shows up as a
+                // brief flicker back to the old colors inside the circle.
+                html.classList.add('theme-transitioning');
+
                 var transition = document.startViewTransition(function () {
                     applyTheme(next);
                 });
@@ -110,6 +118,10 @@
                             pseudoElement: '::view-transition-new(root)'
                         }
                     );
+                });
+
+                transition.finished.then(function () {
+                    html.classList.remove('theme-transitioning');
                 });
             });
         });

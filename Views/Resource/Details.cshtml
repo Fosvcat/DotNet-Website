@@ -2,96 +2,59 @@
 @using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Title;
 }
 
-<h1>Details</h1>
+<article>
+    <header class="mb-3">
+        <h1 class="fw-bold display-6">@Model.Title</h1>
+        <p class="fs-5 text-muted mb-2">@Model.Type</p>
+        <p class="small text-muted mb-0">
+            <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
+            <span class="mx-2">&middot;</span>
+            <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+        </p>
+    </header>
 
-<div>
-    <h4>LearningResource</h4>
     <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Type)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Type)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.MediaUrl)
-        </dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
-            {
-                var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
-                var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
 
-                if (videoExtensions.Contains(extension))
-                {
-                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
-                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
-                        Your browser does not support the video tag.
-                    </video>
-                }
-                else
-                {
-                    <figure class="figure">
-                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
-                        <figcaption class="figure-caption">@Model.Title</figcaption>
-                    </figure>
-                }
+    @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+    {
+        var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
+        var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+
+        <div class="mb-4">
+            @if (videoExtensions.Contains(extension))
+            {
+                <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
+                    <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                    Your browser does not support the video tag.
+                </video>
             }
             else
             {
-                <span class="text-muted">No media attached.</span>
+                <figure class="figure">
+                    <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
+                    <figcaption class="figure-caption">@Model.Title</figcaption>
+                </figure>
             }
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsPublished)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsPublished)
-        </dd>
-    </dl>
-</div>
-<div>
+        </div>
+    }
+
+    <div class="p-3 mb-4 border rounded bg-body-tertiary">
+        @Model.Description
+    </div>
+
+    <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
+</article>
+
+<div class="mt-4 mb-2 d-flex gap-2">
     @if (User.IsInRole("Admin") || User.IsInRole("Root"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> <text> | </text>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
     }
-    <a asp-action="Index">Back to List</a>
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
 </div>
-
 
 <hr />
 <h3>Discussion (@Model.Comments.Count())</h3>

@@ -38,6 +38,16 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
+// Custom route so a resource's read-only view is reached at
+// /Resource/{id} instead of /Resource/Details/{id}. This route only
+// matches a bare numeric segment after "Resource" (e.g. /Resource/5),
+// so /Resource/Edit/3, /Resource/Delete/3, and /Resource/Create are
+// untouched and continue to fall through to the default route below.
+app.MapControllerRoute(
+    name: "resourceDetails",
+    pattern: "Resource/{id:int}",
+    defaults: new { controller = "Resource", action = "Details" });
+
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}")

@@ -40,6 +40,14 @@
   transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
+/* While the circular theme-toggle animation is running, hard-disable
+   every element's own CSS transition. Otherwise the browser can capture
+   the "before/after" view-transition snapshots mid-fade, which shows up
+   as a brief flicker back to the old colors inside the reveal circle. */
+.theme-transitioning * {
+  transition: none !important;
+}
+
 html, body {
   background-color: var(--gs-bg-body);
   color: var(--gs-text-primary);
@@ -73,22 +81,46 @@ body {
   font-weight: 700;
 }
 
+/* Resource article body */
+.resource-content {
+  line-height: 1.7;
+}
+
 /* Circular reveal animation for the light/dark theme toggle.
-   The JS in _Layout.cshtml drives the clip-path circle animation;
-   these rules disable the browser's default cross-fade so only
-   the circle reveal is visible. */
-::view-transition-old(root),
-::view-transition-new(root) {
+   The JS in _Layout.cshtml drives the clip-path circle animation.
+   These rules only disable the browser's default cross-fade while
+   html.theme-transitioning is present (i.e. only for the theme-toggle's
+   same-document transition) so that the separate, native cross-document
+   page transition used for site navigation (see the <meta name="view-transition">
+   tag) keeps its own default fade untouched. */
+html.theme-transitioning::view-transition-old(root),
+html.theme-transitioning::view-transition-new(root) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-::view-transition-old(root) {
+html.theme-transitioning::view-transition-old(root) {
   z-index: 1;
 }
 
-::view-transition-new(root) {
+html.theme-transitioning::view-transition-new(root) {
   z-index: 2;
+}
+
+/* Simple page-to-page transition (Home / Resources / Categories / etc.).
+   Powered natively by the browser via <meta name="view-transition">;
+   this just tunes the default cross-fade's duration slightly and respects
+   the user's motion preferences. */
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-group(root) {
+    animation-duration: 0.25s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*) {
+    animation-duration: 0.001ms !important;
+  }
 }
 
 /* Theme toggle button */
