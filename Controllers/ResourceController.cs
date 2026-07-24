@@ -25,10 +25,26 @@ namespace Geekspace.Controllers
 
         // GET: Resource
         [AllowAnonymous]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search)
         {
-            var applicationDbContext = _context.LearningResources.Include(l => l.Category);
-            return View(await applicationDbContext.ToListAsync());
+            var resources = _context.LearningResources
+                .Include(l => l.Category)
+                .AsQueryable();
+
+            // Filter by the navbar search box when a term is supplied.
+            // ToLower() keeps the match case-insensitive across providers.
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim().ToLower();
+                resources = resources.Where(r =>
+                    r.Title.ToLower().Contains(term) ||
+                    r.Description.ToLower().Contains(term) ||
+                    (r.Content != null && r.Content.ToLower().Contains(term)) ||
+                    (r.Category != null && r.Category.Name.ToLower().Contains(term)));
+            }
+
+            ViewData["Search"] = search;
+            return View(await resources.ToListAsync());
         }
 
 
