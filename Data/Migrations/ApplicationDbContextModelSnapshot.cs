@@ -37,6 +37,30 @@ namespace Geekspace.Data.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("Geekspace.Models.CommentVote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsLike")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("ResourceCommentId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ResourceCommentId", "UserId")
+                        .IsUnique();
+
+                    b.ToTable("CommentVotes");
+                });
+
             modelBuilder.Entity("Geekspace.Models.LearningResource", b =>
                 {
                     b.Property<int>("Id")
@@ -302,6 +326,17 @@ namespace Geekspace.Data.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
+                });
+
+            modelBuilder.Entity("Geekspace.Models.CommentVote", b =>
+                {
+                    b.HasOne("Geekspace.Models.ResourceComment", "ResourceComment")
+                        .WithMany()
+                        .HasForeignKey("ResourceCommentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ResourceComment");
                 });
 
             modelBuilder.Entity("Geekspace.Models.LearningResource", b =>

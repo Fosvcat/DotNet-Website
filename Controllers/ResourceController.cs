@@ -25,26 +25,36 @@ namespace Geekspace.Controllers
 
         // GET: Resource
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index()
         {
-            var resources = _context.LearningResources
-                .Include(l => l.Category)
-                .AsQueryable();
+            var applicationDbContext = _context.LearningResources.Include(l => l.Category);
+            return View(await applicationDbContext.ToListAsync());
+        }
 
-            // Filter by the navbar search box when a term is supplied.
-            // ToLower() keeps the match case-insensitive across providers.
-            if (!string.IsNullOrWhiteSpace(search))
+        // GET: Resource/Search?q=...
+        // Reuses the Index view to render results, flagged via
+        // ViewData["IsSearchView"] so the view can swap its heading and
+        // hide the "Create New" button.
+        [AllowAnonymous]
+        public async Task<IActionResult> Search(string q)
+        {
+            var query = _context.LearningResources.Include(l => l.Category).AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(q))
             {
-                var term = search.Trim().ToLower();
-                resources = resources.Where(r =>
-                    r.Title.ToLower().Contains(term) ||
-                    r.Description.ToLower().Contains(term) ||
-                    (r.Content != null && r.Content.ToLower().Contains(term)) ||
-                    (r.Category != null && r.Category.Name.ToLower().Contains(term)));
+                var term = q.Trim();
+                query = query.Where(r =>
+                    r.Title.Contains(term) ||
+                    r.Description.Contains(term) ||
+                    (r.Content != null && r.Content.Contains(term)));
             }
 
-            ViewData["Search"] = search;
-            return View(await resources.ToListAsync());
+            var results = await query.ToListAsync();
+
+            ViewData["IsSearchView"] = true;
+            ViewData["SearchTerm"] = q;
+
+            return View("Index", results);
         }
 
 
@@ -169,6 +179,35 @@ namespace Geekspace.Controllers
                 }
             }
             ViewBag.RootUserIds = rootUserIds;
+
+            // Vote counts (visible to everyone, including anonymous users).
+            var commentIds = learningResource.Comments.Select(c => c.Id).ToList();
+
+            var voteCounts = await _context.CommentVotes
+                .Where(v => commentIds.Contains(v.ResourceCommentId))
+                .GroupBy(v => v.ResourceCommentId)
+                .Select(g => new
+                {
+                    CommentId = g.Key,
+                    Likes = g.Count(v => v.IsLike),
+                    Dislikes = g.Count(v => !v.IsLike)
+                })
+                .ToListAsync();
+
+            ViewBag.LikeCounts = voteCounts.ToDictionary(v => v.CommentId, v => v.Likes);
+            ViewBag.DislikeCounts = voteCounts.ToDictionary(v => v.CommentId, v => v.Dislikes);
+
+            // The current user's own vote per comment (true = liked,
+            // false = disliked, absent = no vote), used to render the
+            // filled vs. outline icon state. Only computed when signed in.
+            if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var currentUserId = _userManager.GetUserId(User);
+                var myVotes = await _context.CommentVotes
+                    .Where(v => commentIds.Contains(v.ResourceCommentId) && v.UserId == currentUserId)
+                    .ToDictionaryAsync(v => v.ResourceCommentId, v => v.IsLike);
+                ViewBag.MyVotes = myVotes;
+            }
 
             return View(learningResource);
         }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Geekspace.Data;
 using Geekspace.Models;
 
@@ -54,6 +55,54 @@ namespace Geekspace.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", "Resource", new { id = learningResourceId });
+        }
+
+        // POST: Comment/Vote
+        // Handles both like and dislike clicks. [Authorize] on the class
+        // means an unauthenticated POST here is automatically redirected
+        // to the login page by the Identity middleware — no extra code
+        // needed to satisfy "anonymous users get sent to login".
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Vote(int commentId, string voteType)
+        {
+            var comment = await _context.ResourceComments.FindAsync(commentId);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+
+            bool isLike = voteType == "like";
+            var userId = _userManager.GetUserId(User)!;
+
+            var existingVote = await _context.CommentVotes
+                .FirstOrDefaultAsync(v => v.ResourceCommentId == commentId && v.UserId == userId);
+
+            if (existingVote == null)
+            {
+                // No vote yet — record this one.
+                _context.CommentVotes.Add(new CommentVote
+                {
+                    ResourceCommentId = commentId,
+                    UserId = userId,
+                    IsLike = isLike
+                });
+            }
+            else if (existingVote.IsLike == isLike)
+            {
+                // Clicking the same button again removes the vote entirely.
+                _context.CommentVotes.Remove(existingVote);
+            }
+            else
+            {
+                // Switching from like to dislike (or vice versa) — the
+                // previous vote is replaced, never both at once.
+                existingVote.IsLike = isLike;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Resource", new { id = comment.LearningResourceId });
         }
 
         // POST: Comment/Delete/5

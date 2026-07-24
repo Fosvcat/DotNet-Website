@@ -9,4 +9,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Category> Categories { get; set; }
     public DbSet<LearningResource> LearningResources { get; set; }
     public DbSet<ResourceComment> ResourceComments { get; set; }
+    public DbSet<CommentVote> CommentVotes { get; set; }
 }
