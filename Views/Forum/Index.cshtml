@@ -1,0 +1,32 @@
+@model List<Geekspace.Models.ResourceComment>
+
+@{
+    ViewData["Title"] = "Forum";
+}
+
+<h1 class="fw-bold">Forum</h1>
+<p class="text-muted">@Model.Count() posts</p>
+
+<hr />
+
+@if (TempData["CommentError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CommentError"]</div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <div class="form-group">
+            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post</button>
+    </form>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+}
+
+<partial name="_CommentList" model="Model" />

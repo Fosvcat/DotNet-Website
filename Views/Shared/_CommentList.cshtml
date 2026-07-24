@@ -1,0 +1,119 @@
+@model IEnumerable<Geekspace.Models.ResourceComment>
+@using System.Security.Claims
+
+@{
+    // These come from the calling action's ViewBag (Resource.Details or
+    // Forum.Index) — ViewBag/ViewData is shared automatically with
+    // partial views, no need to pass them in explicitly.
+    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string>;
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var likeCounts = ViewBag.LikeCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var dislikeCounts = ViewBag.DislikeCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
+    var myVotes = ViewBag.MyVotes as Dictionary<int, bool>;
+    var rootUserIds = ViewBag.RootUserIds as HashSet<string> ?? new HashSet<string>();
+    bool isSignedIn = User.Identity != null && User.Identity.IsAuthenticated;
+}
+
+@foreach (var comment in Model)
+{
+    int likeCount = likeCounts.ContainsKey(comment.Id) ? likeCounts[comment.Id] : 0;
+    int dislikeCount = dislikeCounts.ContainsKey(comment.Id) ? dislikeCounts[comment.Id] : 0;
+    bool? myVote = (myVotes != null && myVotes.ContainsKey(comment.Id)) ? myVotes[comment.Id] : (bool?)null;
+    bool commentAuthorIsRoot = rootUserIds.Contains(comment.UserId);
+    bool canDeleteThisComment = comment.UserId == currentUserId ||
+                                 User.IsInRole("Root") ||
+                                 (User.IsInRole("Admin") && !commentAuthorIsRoot);
+
+    <div class="card mb-2 comment-card" id="comment-@comment.Id">
+        <div class="card-body">
+            @if (comment.ParentComment != null)
+            {
+                <a href="#comment-@comment.ParentComment.Id" class="comment-quote-link">
+                    <div class="comment-quote">@comment.ParentComment.Content</div>
+                </a>
+            }
+
+            <!-- Top row: author (left) / timestamp (right) -->
+            <div class="d-flex justify-content-between align-items-center comment-row-top">
+                <small class="text-muted">
+                    @(commentAuthors != null && commentAuthors.ContainsKey(comment.UserId) ? commentAuthors[comment.UserId] : "Unknown")
+                </small>
+                <small class="text-muted">@comment.PostedDate.ToString("g")</small>
+            </div>
+
+            <!-- Middle row: comment body, full width -->
+            <p class="card-text comment-row-middle">@comment.Content</p>
+
+            <!-- Bottom row: Reply / Delete (left) — Like / Dislike (right) -->
+            <div class="d-flex justify-content-between align-items-center comment-row-bottom">
+                <div class="d-flex align-items-center gap-3">
+                    @if (isSignedIn)
+                    {
+                        <a href="#" class="comment-action-link reply-toggle" data-comment-id="@comment.Id">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="9 14 4 9 9 4"></polyline>
+                                <path d="M20 20v-7a4 4 0 0 0-4-4H4"></path>
+                            </svg>
+                            Reply
+                        </a>
+                    }
+
+                    @if (isSignedIn && canDeleteThisComment)
+                    {
+                        <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline m-0">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="comment-action-link comment-action-btn">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                                </svg>
+                                Delete
+                            </button>
+                        </form>
+                    }
+                </div>
+
+                <div class="d-flex align-items-center gap-3">
+                    <form asp-controller="Comment" asp-action="Vote" method="post" class="vote-form d-flex align-items-center gap-1 m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <input type="hidden" name="voteType" value="like" />
+                        <button type="submit" class="vote-btn like-btn @(myVote == true ? "voted-like" : "")" title="Like" aria-label="Like this comment">
+                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+                                <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
+                            </svg>
+                        </button>
+                        <span class="vote-count like-count">@likeCount</span>
+                    </form>
+
+                    <form asp-controller="Comment" asp-action="Vote" method="post" class="vote-form d-flex align-items-center gap-1 m-0">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="commentId" value="@comment.Id" />
+                        <input type="hidden" name="voteType" value="dislike" />
+                        <button type="submit" class="vote-btn dislike-btn @(myVote == false ? "voted-dislike" : "")" title="Dislike" aria-label="Dislike this comment">
+                            <svg viewBox="0 0 24 24" width="18" height="18" style="transform: rotate(180deg);" aria-hidden="true">
+                                <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
+                            </svg>
+                        </button>
+                        <span class="vote-count dislike-count">@dislikeCount</span>
+                    </form>
+                </div>
+            </div>
+
+            @if (isSignedIn)
+            {
+                <div class="reply-form-container mt-2" id="reply-form-@comment.Id" style="display:none;">
+                    <form asp-controller="Comment" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="learningResourceId" value="@comment.LearningResourceId" />
+                        <input type="hidden" name="parentCommentId" value="@comment.Id" />
+                        <textarea name="content" class="form-control form-control-sm" rows="2" placeholder="Write a reply..." required></textarea>
+                        <button type="submit" class="btn btn-sm btn-primary mt-2">Post Reply</button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+}

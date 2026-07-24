@@ -58,6 +58,26 @@ namespace Geekspace.Controllers
         }
 
 
+        // GET: Resource/Random
+        // Redirects to a randomly chosen published resource's Details page.
+        // Falls back to the resource list if none exist yet.
+        [AllowAnonymous]
+        public async Task<IActionResult> Random()
+        {
+            var ids = await _context.LearningResources
+                .Where(r => r.IsPublished)
+                .Select(r => r.Id)
+                .ToListAsync();
+
+            if (!ids.Any())
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var randomId = ids[System.Random.Shared.Next(ids.Count)];
+            return RedirectToAction(nameof(Details), new { id = randomId });
+        }
+
         // GET: Resource/Create
         [Authorize(Roles = "Admin,Root")]
         public IActionResult Create()
@@ -151,6 +171,7 @@ namespace Geekspace.Controllers
             var learningResource = await _context.LearningResources
             .Include(l => l.Category)
             .Include(l => l.Comments)
+                .ThenInclude(c => c.ParentComment)
             .FirstOrDefaultAsync(m => m.Id == id);
             if (learningResource == null)
             {

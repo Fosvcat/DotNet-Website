@@ -3,6 +3,7 @@ using System;
 using Geekspace.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Geekspace.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260724172950_AddCommentReplies")]
+    partial class AddCommentReplies
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.10");
@@ -115,7 +118,7 @@ namespace Geekspace.Data.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("LearningResourceId")
+                    b.Property<int>("LearningResourceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ParentCommentId")
@@ -360,7 +363,8 @@ namespace Geekspace.Data.Migrations
                     b.HasOne("Geekspace.Models.LearningResource", "LearningResource")
                         .WithMany("Comments")
                         .HasForeignKey("LearningResourceId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Geekspace.Models.ResourceComment", "ParentComment")
                         .WithMany()

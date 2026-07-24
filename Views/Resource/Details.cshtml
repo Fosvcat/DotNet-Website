@@ -1,5 +1,4 @@
 @model Geekspace.Models.LearningResource
-@using System.Security.Claims
 
 @{
     ViewData["Title"] = Model.Title;
@@ -80,73 +79,4 @@ else
     <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
 }
 
-@{
-    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string>;
-    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-}
-
-@foreach (var comment in Model.Comments.OrderByDescending(c => c.PostedDate))
-{
-    <div class="card mb-2">
-        <div class="card-body">
-            <p class="card-text">@comment.Content</p>
-
-@{
-    var likeCounts = ViewBag.LikeCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
-    var dislikeCounts = ViewBag.DislikeCounts as Dictionary<int, int> ?? new Dictionary<int, int>();
-    var myVotes = ViewBag.MyVotes as Dictionary<int, bool>;
-    int likeCount = likeCounts.ContainsKey(comment.Id) ? likeCounts[comment.Id] : 0;
-    int dislikeCount = dislikeCounts.ContainsKey(comment.Id) ? dislikeCounts[comment.Id] : 0;
-    bool? myVote = (myVotes != null && myVotes.ContainsKey(comment.Id)) ? myVotes[comment.Id] : (bool?)null;
-}
-            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-                <small class="text-muted">
-                    Posted by @(commentAuthors != null && commentAuthors.ContainsKey(comment.UserId) ? commentAuthors[comment.UserId] : "Unknown")
-                    on @comment.PostedDate.ToString("g")
-                </small>
-
-                <div class="d-flex align-items-center gap-3">
-                    <form asp-controller="Comment" asp-action="Vote" method="post" class="d-flex align-items-center gap-1 m-0">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="commentId" value="@comment.Id" />
-                        <input type="hidden" name="voteType" value="like" />
-                        <button type="submit" class="vote-btn @(myVote == true ? "voted-like" : "")" title="Like" aria-label="Like this comment">
-                            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-                                <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
-                            </svg>
-                        </button>
-                        <span class="vote-count">@likeCount</span>
-                    </form>
-
-                    <form asp-controller="Comment" asp-action="Vote" method="post" class="d-flex align-items-center gap-1 m-0">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="commentId" value="@comment.Id" />
-                        <input type="hidden" name="voteType" value="dislike" />
-                        <button type="submit" class="vote-btn @(myVote == false ? "voted-dislike" : "")" title="Dislike" aria-label="Dislike this comment">
-                            <svg viewBox="0 0 24 24" width="18" height="18" style="transform: rotate(180deg);" aria-hidden="true">
-                                <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
-                            </svg>
-                        </button>
-                        <span class="vote-count">@dislikeCount</span>
-                    </form>
-                </div>
-            </div>
-
-@{
-    var rootUserIds = ViewBag.RootUserIds as HashSet<string> ?? new HashSet<string>();
-    bool commentAuthorIsRoot = rootUserIds.Contains(comment.UserId);
-    bool canDeleteThisComment = comment.UserId == currentUserId ||
-                                 User.IsInRole("Root") ||
-                                 (User.IsInRole("Admin") && !commentAuthorIsRoot);
-}
-@if (User.Identity != null && User.Identity.IsAuthenticated && canDeleteThisComment)
-
-            {
-                <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                </form>
-            }
-        </div>
-    </div>
-}
+<partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />

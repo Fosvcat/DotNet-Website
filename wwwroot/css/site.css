@@ -53,6 +53,12 @@ html, body {
   color: var(--gs-text-primary);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
 }
@@ -128,6 +134,73 @@ body {
   min-width: 1ch;
 }
 
+/* Comment card: top (author / timestamp) — middle (body) —
+   bottom (reply+delete / like+dislike), each its own line. */
+.comment-row-top {
+  margin-bottom: 0.4rem;
+}
+
+.comment-row-middle {
+  margin-bottom: 0.6rem;
+}
+
+.comment-row-bottom {
+  min-height: 1.5rem;
+}
+
+/* Reply quote block: shown above a reply, referencing the parent
+   comment's text (no author). Clamped to two lines with an ellipsis. */
+.comment-quote-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.comment-quote {
+  border-left: 3px solid var(--gs-border);
+  padding: 0.25rem 0.75rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.9rem;
+  color: var(--gs-text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.comment-quote-link:hover .comment-quote {
+  border-left-color: var(--gs-accent);
+  color: var(--gs-text-primary);
+}
+
+/* Reply / Delete small text-links (icon + label), matching the
+   author line's font size rather than looking like buttons. */
+.comment-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--gs-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.comment-action-link:hover {
+  color: var(--gs-accent);
+  text-decoration: underline;
+}
+
+.comment-action-btn {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  line-height: inherit;
+  vertical-align: baseline;
+  user-select: text;
+}
+
 /* Circular reveal animation for the light/dark theme toggle.
    The click handler in _Layout.cshtml sets --reveal-x / --reveal-y /
    --reveal-radius and toggles html.theme-transitioning; the actual
@@ -188,42 +261,44 @@ html.theme-transitioning::view-transition-new(root) {
   }
 }
 
-/* Navbar three-column layout: nav links | search box | account area.
-   Grid keeps the search box visually centered in the navbar regardless
-   of how wide the left/right groups are. Below the sm breakpoint (where
-   Bootstrap's own navbar-expand-sm collapses to a hamburger menu) this
-   falls back to a simple stacked block layout. */
-.navbar-grid {
-  display: block;
-}
-
-@media (min-width: 576px) {
-  .navbar-grid {
-    display: grid;
-    grid-template-columns: 1fr auto 1fr;
-    align-items: center;
-    gap: 1rem;
-  }
-}
-
-/* Rounded-rectangle search box, adapted to the current theme */
-.search-box {
-  width: 100%;
-  min-width: 200px;
-  max-width: 280px;
-  border-radius: 10px;
+/* Pill-shaped search box: icon + input inside one rounded-both-ends
+   container on the right side of the navbar, adapted to the current theme. */
+.gs-search {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 32px;
+  box-sizing: border-box;
   background-color: var(--gs-bg-body);
   border: 1px solid var(--gs-border);
-  color: var(--gs-text-primary);
+  border-radius: 999px;
+  padding: 0 0.85rem;
 }
 
-.search-box::placeholder {
+.gs-search-icon {
+  display: inline-flex;
   color: var(--gs-text-muted);
 }
 
-.search-box:focus {
-  background-color: var(--gs-bg-body);
+.gs-search-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gs-search-input {
+  border: none;
+  background: transparent;
+  outline: none;
   color: var(--gs-text-primary);
+  font-size: 0.9rem;
+  width: 120px;
+}
+
+.gs-search-input::placeholder {
+  color: var(--gs-text-muted);
+}
+
+.gs-search:focus-within {
   border-color: var(--gs-accent);
   box-shadow: 0 0 0 0.15rem var(--gs-accent);
 }
@@ -233,12 +308,13 @@ html.theme-transitioning::view-transition-new(root) {
   border: 1px solid var(--gs-border);
   background-color: transparent;
   border-radius: 999px;
-  width: 38px;
-  height: 38px;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
   line-height: 1;
   cursor: pointer;
 }

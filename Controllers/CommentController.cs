@@ -25,20 +25,26 @@ namespace Geekspace.Controllers
         }
 
         // POST: Comment/Create
+        // learningResourceId is nullable: present = a comment on that
+        // resource's discussion section, absent = a standalone Forum post.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int learningResourceId, string content)
+        public async Task<IActionResult> Create(int? learningResourceId, string content, int? parentCommentId)
         {
             if (string.IsNullOrWhiteSpace(content))
             {
                 TempData["CommentError"] = "Comment cannot be empty.";
-                return RedirectToAction("Details", "Resource", new { id = learningResourceId });
+                return learningResourceId.HasValue
+                    ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
+                    : RedirectToAction("Index", "Forum");
             }
 
             if (content.Length > 1000)
             {
                 TempData["CommentError"] = "Comment cannot exceed 1000 characters.";
-                return RedirectToAction("Details", "Resource", new { id = learningResourceId });
+                return learningResourceId.HasValue
+                    ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
+                    : RedirectToAction("Index", "Forum");
             }
 
             var userId = _userManager.GetUserId(User);
@@ -48,20 +54,24 @@ namespace Geekspace.Controllers
                 LearningResourceId = learningResourceId,
                 UserId = userId!,
                 Content = content,
-                PostedDate = DateTime.Now
+                PostedDate = DateTime.Now,
+                ParentCommentId = parentCommentId
             };
 
             _context.ResourceComments.Add(comment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", "Resource", new { id = learningResourceId });
+            return learningResourceId.HasValue
+                ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
+                : RedirectToAction("Index", "Forum");
         }
 
         // POST: Comment/Vote
-        // Handles both like and dislike clicks. [Authorize] on the class
-        // means an unauthenticated POST here is automatically redirected
-        // to the login page by the Identity middleware — no extra code
-        // needed to satisfy "anonymous users get sent to login".
+        // Called via fetch() from site.js so voting never triggers a full
+        // page reload. [Authorize] on the class still means an
+        // unauthenticated POST here gets redirected to the login page by
+        // the Identity middleware; the client-side JS detects that case
+        // (a non-JSON response) and navigates there manually.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Vote(int commentId, string voteType)
@@ -78,6 +88,8 @@ namespace Geekspace.Controllers
             var existingVote = await _context.CommentVotes
                 .FirstOrDefaultAsync(v => v.ResourceCommentId == commentId && v.UserId == userId);
 
+            bool? myVoteAfter;
+
             if (existingVote == null)
             {
                 // No vote yet — record this one.
@@ -87,22 +99,28 @@ namespace Geekspace.Controllers
                     UserId = userId,
                     IsLike = isLike
                 });
+                myVoteAfter = isLike;
             }
             else if (existingVote.IsLike == isLike)
             {
                 // Clicking the same button again removes the vote entirely.
                 _context.CommentVotes.Remove(existingVote);
+                myVoteAfter = null;
             }
             else
             {
                 // Switching from like to dislike (or vice versa) — the
                 // previous vote is replaced, never both at once.
                 existingVote.IsLike = isLike;
+                myVoteAfter = isLike;
             }
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", "Resource", new { id = comment.LearningResourceId });
+            var likeCount = await _context.CommentVotes.CountAsync(v => v.ResourceCommentId == commentId && v.IsLike);
+            var dislikeCount = await _context.CommentVotes.CountAsync(v => v.ResourceCommentId == commentId && !v.IsLike);
+
+            return Json(new { likeCount, dislikeCount, myVote = myVoteAfter });
         }
 
         // POST: Comment/Delete/5
@@ -151,11 +169,13 @@ namespace Geekspace.Controllers
                 return Forbid();
             }
 
-            int resourceId = comment.LearningResourceId;
+            int? resourceId = comment.LearningResourceId;
             _context.ResourceComments.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", "Resource", new { id = resourceId });
+            return resourceId.HasValue
+                ? RedirectToAction("Details", "Resource", new { id = resourceId })
+                : RedirectToAction("Index", "Forum");
         }
     }
 }
