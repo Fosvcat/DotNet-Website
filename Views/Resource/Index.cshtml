@@ -6,6 +6,17 @@
 
 <h1>Resource</h1>
 
+@{
+    var searchTerm = ViewData["Search"] as string;
+}
+@if (!string.IsNullOrWhiteSpace(searchTerm))
+{
+    <p class="text-muted">
+        @Model.Count() result(s) for <strong>&ldquo;@searchTerm&rdquo;</strong>.
+        <a asp-action="Index">Clear search</a>
+    </p>
+}
+
 @if (User.IsInRole("Admin") || User.IsInRole("Root"))
 {
     <p>

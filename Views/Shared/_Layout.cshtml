@@ -36,6 +36,17 @@
                         </ul>
 
                         <div class="d-flex align-items-center">
+                            <form class="gs-search me-2" role="search" method="get" asp-controller="Resource" asp-action="Index">
+                                <span class="gs-search-icon" aria-hidden="true">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="11" cy="11" r="7"></circle>
+                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    </svg>
+                                </span>
+                                <input type="search" name="search" class="gs-search-input" placeholder="Search..."
+                                       aria-label="Search resources" value="@(Context.Request.Query["search"])" />
+                            </form>
                             <button id="themeToggle" class="btn theme-toggle-btn me-2" type="button" title="Toggle light / dark theme">
                                 <span id="themeIcon">🌙</span>
                             </button>
@@ -79,19 +90,20 @@
             toggleBtn.addEventListener('click', function (event) {
                 var next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
 
-                // Fallback for browsers without View Transitions support
-                // (e.g. Firefox): switch instantly, no circular reveal.
+                // Fallback for browsers without View Transitions support:
+                // switch instantly, no circular reveal.
                 if (!document.startViewTransition) {
                     applyTheme(next);
                     return;
                 }
 
-                var x = event.clientX;
-                var y = event.clientY;
-                var endRadius = Math.hypot(
-                    Math.max(x, window.innerWidth - x),
-                    Math.max(y, window.innerHeight - y)
-                );
+                // Reveal origin. Prefer the actual pointer position; fall back
+                // to the button's centre when there is no pointer (e.g. the
+                // button was activated with the keyboard, where clientX/clientY
+                // are 0 and would otherwise start the circle at the top-left).
+                var rect = toggleBtn.getBoundingClientRect();
+                var x = event.clientX || (rect.left + rect.width / 2);
+                var y = event.clientY || (rect.top + rect.height / 2);
 
                 // Disable all CSS color transitions for the duration of the
                 // theme switch. Without this, elements with their own
@@ -105,11 +117,38 @@
                 });
 
                 transition.ready.then(function () {
+                    // Chrome can capture the ENTIRE scrollable page as the
+                    // ::view-transition-new(root) snapshot instead of just the
+                    // visible viewport. When it does, that snapshot's coordinate
+                    // space is the whole document (not the viewport) and it is
+                    // taller/wider than the viewport - so a circle sized to the
+                    // viewport starts in the wrong spot and stops growing before
+                    // it reaches the real page edges (the "starts mid-top / dies
+                    // at ~80%" bug). Firefox snapshots only the viewport, so it
+                    // looked fine there.
+                    //
+                    // Measure the snapshot the browser actually produced and
+                    // adapt: when it is larger than the viewport, shift the
+                    // origin into document coordinates (add the scroll offset)
+                    // and size the radius to cover the whole snapshot.
+                    var snap = getComputedStyle(html, '::view-transition-new(root)');
+                    var snapW = parseFloat(snap.width) || window.innerWidth;
+                    var snapH = parseFloat(snap.height) || window.innerHeight;
+
+                    var fullPage = snapW > window.innerWidth + 1 || snapH > window.innerHeight + 1;
+                    var originX = fullPage ? x + window.scrollX : x;
+                    var originY = fullPage ? y + window.scrollY : y;
+
+                    var endRadius = Math.hypot(
+                        Math.max(originX, snapW - originX),
+                        Math.max(originY, snapH - originY)
+                    );
+
                     html.animate(
                         {
                             clipPath: [
-                                'circle(0px at ' + x + 'px ' + y + 'px)',
-                                'circle(' + endRadius + 'px at ' + x + 'px ' + y + 'px)'
+                                'circle(0px at ' + originX + 'px ' + originY + 'px)',
+                                'circle(' + endRadius + 'px at ' + originX + 'px ' + originY + 'px)'
                             ]
                         },
                         {

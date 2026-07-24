@@ -7,6 +7,9 @@
 
 :root,
 [data-bs-theme="light"] {
+  /* Shared height for the navbar search box and the theme-toggle button so
+     the two controls line up and read as one unified set. */
+  --gs-control-h: 38px;
   --gs-bg-body: #f4f6fb;
   --gs-bg-surface: #ffffff;
   --gs-bg-card: #ffffff;
@@ -123,17 +126,75 @@ html.theme-transitioning::view-transition-new(root) {
   }
 }
 
-/* Theme toggle button */
+/* Navbar search box.
+   A fully rounded "pill": border-radius >= half the height turns each end
+   into a perfect semicircle while the height stays fixed. The magnifier icon
+   is absolutely positioned inside the left padding and inherits the input's
+   text colour (currentColor) so it stays monochrome in both themes. */
+.gs-search {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: var(--gs-control-h);
+}
+
+.gs-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--gs-text-muted);
+  pointer-events: none;
+}
+
+.gs-search-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.gs-search-input {
+  height: var(--gs-control-h);
+  width: 210px;
+  max-width: 46vw;
+  padding: 0 1rem 0 2.4rem;
+  border: 1px solid var(--gs-border);
+  border-radius: 999px;
+  background-color: var(--gs-bg-body);
+  color: var(--gs-text-primary);
+  font-size: 0.9rem;
+  line-height: 1;
+  outline: none;
+}
+
+.gs-search-input::placeholder {
+  color: var(--gs-text-muted);
+}
+
+.gs-search-input:focus {
+  border-color: var(--gs-accent);
+  box-shadow: 0 0 0 0.2rem var(--gs-shadow);
+}
+
+/* Hide the browser's native clear (x) control so the pill stays clean. */
+.gs-search-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+/* Theme toggle button.
+   Diameter is locked to --gs-control-h so the circular button matches the
+   search box height exactly for a unified look. */
 .theme-toggle-btn {
   border: 1px solid var(--gs-border);
   background-color: transparent;
   border-radius: 999px;
-  width: 38px;
-  height: 38px;
+  width: var(--gs-control-h);
+  height: var(--gs-control-h);
+  padding: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1rem;
   line-height: 1;
   cursor: pointer;
 }
