@@ -33,6 +33,10 @@
                 <li><hr class="dropdown-divider" /></li>
                 <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Manage Account</a></li>
                 <li><a class="dropdown-item" asp-area="" asp-controller="Activity" asp-action="Index">Manage Activity</a></li>
+                @if (roleLabel == "Admin" || roleLabel == "Root")
+                {
+                    <li><a class="dropdown-item" asp-area="" asp-controller="UserManagement" asp-action="Index">Manage Users</a></li>
+                }
                 <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
                 <li><hr class="dropdown-divider" /></li>
                 <li>

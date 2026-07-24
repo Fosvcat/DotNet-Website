@@ -73,6 +73,24 @@ body {
   font-weight: 700;
 }
 
+/* Circular reveal animation for the light/dark theme toggle.
+   The JS in _Layout.cshtml drives the clip-path circle animation;
+   these rules disable the browser's default cross-fade so only
+   the circle reveal is visible. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 1;
+}
+
+::view-transition-new(root) {
+  z-index: 2;
+}
+
 /* Theme toggle button */
 .theme-toggle-btn {
   border: 1px solid var(--gs-border);
