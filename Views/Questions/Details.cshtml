@@ -6,7 +6,7 @@
     var comments = ViewBag.Comments as IEnumerable<Geekspace.Models.ResourceComment> ?? Enumerable.Empty<Geekspace.Models.ResourceComment>();
 }
 
-<header class="python-article-hero">
+<header class="python-article-hero python-article-hero--compact">
     <div class="python-article-kicker">
         <span class="python-article-kicker-mark" aria-hidden="true"></span>
         <span>Knowledge Check</span>
@@ -34,11 +34,12 @@
         {
             var question = Model.Questions[questionIndex];
             var inputName = $"quiz-{Model.Id}-q{questionIndex + 1}";
-            <fieldset class="python-question" data-correct-answer="@question.CorrectValue">
-                <legend>
+            var legendId = $"quiz-{Model.Id}-q{questionIndex + 1}-legend";
+            <div class="python-question" data-correct-answer="@question.CorrectValue" role="group" aria-labelledby="@legendId">
+                <div class="python-question-legend" id="@legendId">
                     <span>Question @((questionIndex + 1).ToString("00"))</span>
                     @question.Prompt
-                </legend>
+                </div>
                 @foreach (var option in question.Options)
                 {
                     <label>
@@ -47,7 +48,7 @@
                     </label>
                 }
                 <p class="python-question-feedback" aria-live="polite"></p>
-            </fieldset>
+            </div>
         }
 
         <div class="python-quiz-actions">

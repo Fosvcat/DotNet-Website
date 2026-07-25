@@ -342,6 +342,26 @@ body {
   line-height: 1.65;
 }
 
+/* Smaller, narrower hero for standalone Questions pages — visually
+   distinct from the wider, larger Resource Details hero even though
+   both reuse the same base .python-article-hero styling. */
+.python-article-hero--compact {
+  max-width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+.python-article-hero--compact h1 {
+  max-width: 100%;
+  font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+}
+
+.python-article-hero--compact .python-article-lead {
+  max-width: 100%;
+  font-size: clamp(0.92rem, 1.5vw, 1.05rem);
+}
+
 .python-article-meta {
   position: relative;
   z-index: 1;
@@ -889,9 +909,7 @@ body {
   background: var(--gs-bg-surface);
 }
 
-.python-question legend {
-  float: none;
-  width: 100%;
+.python-question-legend {
   margin: 0 0 0.8rem;
   color: var(--gs-text-primary);
   font-size: 0.94rem;
@@ -899,7 +917,7 @@ body {
   line-height: 1.55;
 }
 
-.python-question legend span {
+.python-question-legend span {
   display: block;
   margin-bottom: 0.2rem;
   color: var(--gs-accent);
@@ -1264,8 +1282,9 @@ body {
   position: relative;
   left: 50%;
   margin-left: -50vw;
+  margin-top: 1.75rem;
   display: grid;
-  grid-template-columns: 1fr minmax(0, 760px) 1fr;
+  grid-template-columns: 1fr minmax(0, 900px) 1fr;
   column-gap: 2rem;
   align-items: start;
 }
@@ -1282,7 +1301,7 @@ body {
   top: 1.5rem;
   width: 260px;
   max-width: 100%;
-  padding-right: 1.5rem;
+  padding-right: 3.5rem;
 }
 
 .resource-toc-sidebar p {
