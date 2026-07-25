@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Geekspace.Data;
 using Geekspace.Models;
 using Microsoft.AspNetCore.Authorization;
+using Markdig;
 using Microsoft.AspNetCore.Identity;
 
 namespace Geekspace.Controllers
@@ -229,6 +230,15 @@ namespace Geekspace.Controllers
                     .ToDictionaryAsync(v => v.ResourceCommentId, v => v.IsLike);
                 ViewBag.MyVotes = myVotes;
             }
+
+            // Render the article body from Markdown to HTML. Markdig's
+            // default pipeline does not pass through raw <script> tags or
+            // arbitrary embedded HTML, so this is safe to output directly
+            // even though the source is user-submitted text.
+            var markdownPipeline = new MarkdownPipelineBuilder()
+                .UseAdvancedExtensions()
+                .Build();
+            ViewBag.ContentHtml = Markdown.ToHtml(learningResource.Content ?? string.Empty, markdownPipeline);
 
             return View(learningResource);
         }

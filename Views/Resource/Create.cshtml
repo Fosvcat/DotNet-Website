@@ -24,7 +24,8 @@
             </div>
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control"></textarea>
+                <textarea asp-for="Content" class="form-control" rows="10"></textarea>
+                <small style="color:#6c757d;">Markdown is supported: headings (#), bold (**text**), italics (*text*), lists, links ([text](url)), images (![alt](url)), code blocks (```), tables, and blockquotes (&gt;).</small>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">

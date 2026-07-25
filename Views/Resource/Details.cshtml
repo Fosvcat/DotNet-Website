@@ -32,7 +32,7 @@
             }
             else
             {
-                <figure class="figure">
+                <figure class="figure text-center d-block">
                     <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
                     <figcaption class="figure-caption">@Model.Title</figcaption>
                 </figure>
@@ -58,7 +58,9 @@
         @Model.Description
     </div>
 
-    <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
+    <div class="resource-content markdown-body">
+        @Html.Raw((string)ViewBag.ContentHtml)
+    </div>
 </article>
 
 <div class="mt-4 mb-2 d-flex gap-2">
