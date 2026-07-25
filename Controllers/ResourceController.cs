@@ -92,7 +92,7 @@ namespace Geekspace.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Root")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Description,Content,Type,MediaUrl,CategoryId,CreatedDate,IsPublished")] LearningResource learningResource)
+        public async Task<IActionResult> Create([Bind("Id,Title,Description,Content,Type,MediaUrl,DownloadableFilePath,CategoryId,CreatedDate,IsPublished")] LearningResource learningResource)
         {
             if (ModelState.IsValid)
             {
@@ -128,7 +128,7 @@ namespace Geekspace.Controllers
         [HttpPost]
         [Authorize(Roles = "Admin,Root")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Content,Type,MediaUrl,CategoryId,CreatedDate,IsPublished")] LearningResource learningResource)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Description,Content,Type,MediaUrl,DownloadableFilePath,CategoryId,CreatedDate,IsPublished")] LearningResource learningResource)
         {
             if (id != learningResource.Id)
             {

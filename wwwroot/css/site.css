@@ -173,6 +173,42 @@ body {
   line-height: 1.7;
 }
 
+/* Downloadable file bar: download icon pinned to the left, filename
+   centered across the whole bar (independent of the icon's position). */
+.download-bar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: 10px;
+  background-color: var(--gs-bg-card);
+  border: 1px solid var(--gs-border);
+  text-decoration: none;
+  transition: background-color 0.15s ease;
+}
+
+.download-bar:hover {
+  background-color: var(--gs-border);
+}
+
+.download-icon {
+  color: var(--gs-accent);
+  flex-shrink: 0;
+}
+
+.download-filename {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--gs-text-primary);
+  font-weight: 500;
+  max-width: 70%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 /* Comment like / dislike buttons.
    Default state: monochrome outline icon (fill: none, stroke: currentColor).
    Voted state: monochrome filled icon (fill: currentColor, stroke: none).
@@ -440,14 +476,13 @@ html[data-bs-theme="dark"] .theme-toggle-btn .icon-moon {
   box-sizing: border-box;
   border: 1px solid var(--gs-border);
   border-radius: 999px;
-  color: var(--gs-text-muted);
+  color: var(--gs-text-primary);
   text-decoration: none;
   margin-right: 0.5rem;
 }
 
 .notification-bell:hover {
   background-color: var(--gs-border);
-  color: var(--gs-text-primary);
 }
 
 .notification-badge {

@@ -37,6 +37,10 @@ namespace Geekspace.Models
         [StringLength(300)]
         public string? MediaUrl { get; set; }
 
+        [Display(Name = "Downloadable File Path")]
+        [StringLength(300)]
+        public string? DownloadableFilePath { get; set; }
+
         [Display(Name = "Category")]
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
