@@ -702,14 +702,6 @@ body > .container {
   flex: 1 0 auto;
 }
 
-/* The About-Platform note (added just above the footer) is a second
-   direct .container child of body — override the sticky-footer rule
-   above so it doesn't also try to flex-grow and fill leftover space. */
-body > .container.about-platform-note {
-  flex: 0 0 auto;
-  padding: 0.75rem 0;
-}
-
 footer {
   flex-shrink: 0;
   background-color: var(--gs-bg-surface);
