@@ -1,8 +1,10 @@
+*This project is a website demo built with .NET + SQLite.*
+
 # Geekspace
 
-Geekspace is a web-based learning platform for cybersecurity and technology education. It brings together articles, videos, virtual labs, simulations, and self-assessments in one place, and lets registered members discuss and rate each piece of content, test their knowledge with quick quizzes, and hold open conversations on a general discussion board.
+Geekspace is a web-based learning platform focused on cybersecurity and technology education. It brings together articles, videos, virtual labs, simulations, and self-assessments in one place, and lets registered members discuss and rate each piece of content, test their knowledge with quick quizzes, and hold open conversations in a general discussion area.
 
-This README is a plain-language guide to what the site does and how to use it. Technical implementation details are covered separately in the project's assignment documentation.
+This README is a plain-language guide to what the site does and how to use it.
 
 ---
 
@@ -47,13 +49,13 @@ This README is a plain-language guide to what the site does and how to use it. T
    ```
 5. Open the address shown in the terminal (typically `http://localhost:5159`) in a browser.
 
-The first time the site starts, it seeds a handful of sample categories and resources automatically, so there is content to browse right away. It's also worth registering (or logging into) the `root@fosvcat.com` and `admin@fosvcat.com` accounts once on a fresh copy of the site so their Root/Admin roles are assigned correctly.
+The first time the site starts, it seeds a handful of sample categories and resources automatically, so there is content to browse right away. It's also worth registering (or logging into) the `root@fosvcat.com` and `admin@fosvcat.com` accounts once on a fresh copy of the site, to make sure their Root/Admin roles are assigned correctly.
 
 ---
 
 ## Test Accounts
 
-The following accounts are already registered and can be used to explore every role's experience:
+The following accounts are already registered and can be used to explore each role's experience:
 
 | Email | Password | Role |
 |---|---|---|
@@ -62,18 +64,18 @@ The following accounts are already registered and can be used to explore every r
 | User@fosvcat.com | #User123 | User |
 | Mark@fosvcat.com | #Mark123 | User |
 
-New visitors can also register their own account from the **Register** link in the top-right corner. New accounts are given an automatically generated username (based on the email address) that can be changed at any time — see [Account Settings](#account-settings).
+New visitors can also register their own account from the **Register** link in the top-right corner. New accounts are given an automatically generated username based on their email address, which can be changed at any time — see [Account Settings](#account-settings).
 
 ---
 
 ## User Roles
 
-Geekspace has three tiers of access:
+The site has four tiers of access:
 
-- **Visitor (not logged in)** — can browse all published resources, categories, and the forum, but cannot comment, vote, take quizzes, or manage content.
-- **User** — a registered member. Can comment, reply, like/dislike, post in the forum, take quizzes, and manage their own account and comments.
-- **Admin** — everything a User can do, plus creating, editing, and deleting resources and categories, moderating comments and forum posts, and promoting Users to Admin.
-- **Root** — the highest level of access. Everything an Admin can do, plus demoting Admins, banning or deleting any account (except other Root accounts), and moderating content from anyone, including Admins.
+- **Visitor (not logged in)** — can browse all published resources, categories, and the forum, but cannot post comments, like/dislike, take quizzes, or manage content.
+- **User** — a registered member. Can access all resources; can comment, reply, like/dislike, post in the forum, take quizzes, and manage their own account and comments; and can receive notifications.
+- **Admin** — has all User permissions, plus can create, edit, and delete resources and categories, and moderate comments and forum posts. Can delete other Users' posts, promote a User to Admin, and ban/unban or delete a User.
+- **Root** — there is only one Root account. Has the highest level of access. In addition to all Admin permissions, can demote an Admin back to User, moderate and delete posts from any account, and ban or delete any account except their own.
 
 ---
 
@@ -87,7 +89,7 @@ The **Categories** page groups resources by subject area (for example, "Cybersec
 
 ## Questions
 
-The **Questions** section is a separate area of the site with short, self-contained multiple-choice quizzes (for example, "Understanding the CIA Triad" or "TCP/IP Fundamentals"). Signed-in members can answer each quiz and immediately see which answers were correct. Only logged-in users can open a quiz — visiting a quiz page while signed out redirects to the login page. Every quiz also has its own discussion section at the bottom, using the same comment, reply, and voting tools as everywhere else on the site.
+The **Questions** section is a separate area of the site with short, self-contained multiple-choice quizzes (for example, "Understanding the CIA Triad" or "TCP/IP Fundamentals"). Signed-in members can answer each quiz and immediately see which answers were correct. Only logged-in users can open a quiz. Every quiz also has its own discussion section at the bottom, using the same comment, reply, and voting tools as everywhere else on the site.
 
 ## The Forum
 
@@ -115,11 +117,11 @@ Every resource page, quiz page, and the Forum have a discussion section at the b
 
 - Signed-in members can post a comment using the text box provided.
 - Click **Reply** under any comment to respond directly to it. The reply appears in the list with a small quoted preview of the original comment above it — click the quote to jump back to what it's replying to.
-- Comment authors (and Admins/Root) can **Delete** their own or others' comments, depending on role permissions described above.
+- Comment authors can delete their own comments at any time; Admins and Root can delete other people's comments according to the role permissions described above.
 
 ## Likes & Dislikes
 
-Every comment has thumbs-up and thumbs-down buttons with a running count, visible to everyone. Signed-in members can vote once per comment — clicking the opposite button switches your vote, and clicking your own vote again removes it. Voting happens instantly without reloading the page.
+Every comment has thumbs-up and thumbs-down buttons with a running count, visible to everyone. Signed-in members can vote once per comment — clicking the opposite button changes your vote, and clicking your own vote again removes it.
 
 ## Notifications
 
@@ -127,7 +129,9 @@ Signed-in members receive a notification whenever someone replies to their comme
 
 ## My Activity
 
-Every signed-in member has a personal **Manage Activity** page (linked from the account menu) listing every comment they've posted, with quick links to jump to each one or delete it. Admins and Root see everyone's activity here instead, for moderation purposes.
+Every signed-in member has a personal **Manage Activity** page (linked from the account menu) listing every comment they've posted, with quick links to jump to each one or delete it.
+
+For Admins and Root, the **Manage Activity** page shows every user's activity instead, for moderation purposes. They can delete other people's comments according to the role permissions described above.
 
 ## Managing Content (Admin / Root)
 
@@ -137,21 +141,21 @@ Admins and Root can:
 - Create, edit, and delete categories.
 - Delete any comment or forum post according to their role's permissions.
 
-These controls appear automatically in the navigation and on each list/detail page when logged in with sufficient permissions — no separate admin area to hunt for.
+When logged in as Admin or Root, these controls automatically appear in the navigation and on every list/detail page — otherwise they don't appear.
 
 ## User Management (Admin / Root)
 
-The **Manage Users** page (from the account menu) lists every registered account, their username, email, role, and account status.
+The **Manage Users** page (in the account menu) lists every registered account, including their username, email, role, and account status.
 
-- **Admin** can promote a User to Admin, and can ban or delete a User account.
-- **Root** can also demote an Admin back to a regular User, ban or unban any Admin or User account, and delete any Admin or User account. Root accounts themselves can never be banned, deleted, or demoted through this screen.
-- A **banned** account can no longer log in — attempting to sign in shows a message explaining the account has been banned. If the account is already signed in elsewhere, it's automatically signed out shortly after being banned.
-- Deleting an account clears its ban status first, as a safeguard.
-- Promotion, demotion, ban, unban, and deletion actions all ask for confirmation before taking effect.
+- **Admin** can promote a User to Admin, but cannot demote other Admins back to User. Admin can ban or delete User accounts, but cannot ban or delete other Admin accounts.
+- **Root** can freely change any account between Admin and User, ban or unban any Admin or User account, and delete any Admin or User account. Root accounts themselves can never be banned, deleted, or demoted through this screen.
+- A **banned** account can no longer log in — attempting to sign in shows a message explaining that the account has been banned. If that account is already signed in elsewhere, it will be automatically signed out within 30 seconds of being banned.
+- For security reasons, deleting an account clears its ban status first.
+- Promotion, demotion, ban, unban, and deletion actions all require confirmation before taking effect.
 
 ## Account Settings
 
-From the account menu, **Manage Account** lets a member update their:
+From the account menu, **Manage Account** lets a member update:
 
 - **Username** — freely editable at any time (must be unique; the site will say so if the name is already taken). New accounts are automatically given a starter username based on their email address, which can be changed right away.
 - **Email**, **Password**, and **Phone number**.
