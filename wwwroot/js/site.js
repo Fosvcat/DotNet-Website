@@ -22,8 +22,7 @@ function initCommentVoting() {
             fetch(form.action, {
                 method: 'POST',
                 body: formData,
-                credentials: 'same-origin',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                credentials: 'same-origin'
             })
                 .then(function (response) {
                     var contentType = response.headers.get('content-type') || '';

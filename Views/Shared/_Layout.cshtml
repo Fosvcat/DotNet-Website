@@ -17,6 +17,20 @@
     <link rel="stylesheet" href="~/Geekspace.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+
+        // Particle background is only shown on the four "root" browsing
+        // pages, never on Details/Edit/Create/Delete or account pages.
+        // Resource's Search results reuse the Index view, so it's
+        // included too for visual consistency with plain browsing.
+        bool showParticleBackground =
+            (currentController == "Home" && currentAction == "Index") ||
+            (currentController == "Resource" && (currentAction == "Index" || currentAction == "Search")) ||
+            (currentController == "Category" && currentAction == "Index") ||
+            (currentController == "Forum" && currentAction == "Index");
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -28,13 +42,13 @@
                     <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                         <ul class="navbar-nav flex-grow-1">
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Resource" asp-action="Index">Resources</a>
+                                <a class="nav-link text-dark @(currentController == "Resource" ? "active-nav-link" : "")" asp-area="" asp-controller="Resource" asp-action="Index">Resources</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
+                                <a class="nav-link text-dark @(currentController == "Category" ? "active-nav-link" : "")" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Forum" asp-action="Index">Forum</a>
+                                <a class="nav-link text-dark @(currentController == "Forum" ? "active-nav-link" : "")" asp-area="" asp-controller="Forum" asp-action="Index">Forum</a>
                             </li>
                         </ul>
 
@@ -132,6 +146,10 @@
             });
         });
     </script>
+    @if (showParticleBackground)
+    {
+        <script color="67,97,238" opacity="0.75" zIndex="0" count="110" src="~/lib/canvas-nest/canvas-nest.js"></script>
+    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

@@ -1,6 +1,93 @@
 ﻿@{
     ViewData["Title"] = "Privacy Policy";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<article>
+    <header class="mb-3">
+        <h1 class="fw-bold">Privacy Policy</h1>
+        <p class="text-muted">Last updated: @DateTime.Now.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</p>
+    </header>
+
+    <p>
+        Geekspace is an educational project built to demonstrate web application development
+        concepts, including user authentication, database-driven content, and community
+        discussion features. This page explains what information the platform collects, how
+        it is used, and the choices available to you.
+    </p>
+
+    <section class="mt-4">
+        <h2 class="h4">1. Information We Collect</h2>
+        <ul>
+            <li><strong>Account information:</strong> when you register, we store your email address and a securely hashed version of your password. We never store your password in plain text.</li>
+            <li><strong>Content you create:</strong> comments, replies, and votes (likes/dislikes) you post are stored and linked to your account so they can be displayed, edited, or removed by you or an administrator.</li>
+            <li><strong>Optional security data:</strong> if you choose to enable TOTP (authenticator app) two-factor authentication, we store the shared secret key required to verify your login codes.</li>
+            <li><strong>Local preferences:</strong> your light/dark theme choice is stored in your browser's local storage, not on our servers, and never leaves your device.</li>
+        </ul>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">2. How We Use Your Information</h2>
+        <p>Information you provide is used only to operate the platform, specifically to:</p>
+        <ul>
+            <li>Authenticate you and maintain your login session.</li>
+            <li>Display your username alongside comments and replies you post.</li>
+            <li>Enforce role-based permissions (User, Admin, Root) across the site.</li>
+            <li>Allow administrators to moderate content in accordance with the site's community rules.</li>
+        </ul>
+        <p>We do not sell, rent, or share your personal information with third parties, and we do not run advertising or third-party analytics on this site.</p>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">3. Cookies</h2>
+        <p>
+            Geekspace uses a single essential cookie to keep you signed in between requests.
+            This cookie is required for the site to function and does not track you across
+            other websites. No advertising or third-party tracking cookies are used.
+        </p>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">4. Data Storage</h2>
+        <p>
+            All data is stored in a local SQLite database associated with this application.
+            No data is transmitted to or processed by any external cloud service, and no data
+            is shared outside of the Geekspace platform.
+        </p>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">5. Your Rights and Choices</h2>
+        <ul>
+            <li>You may edit or delete your own comments and replies at any time.</li>
+            <li>You may request that an administrator delete your account and associated data.</li>
+            <li>You may enable or disable two-factor authentication at any time from your account settings.</li>
+        </ul>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">6. Children's Privacy</h2>
+        <p>
+            Geekspace is intended for users capable of independently creating an account and is
+            not directed at children. We do not knowingly collect personal information from
+            children.
+        </p>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">7. Changes to This Policy</h2>
+        <p>
+            As this is an educational project, this policy may be updated as new features are
+            added to the platform. Continued use of the site after changes indicates acceptance
+            of the updated policy.
+        </p>
+    </section>
+
+    <section class="mt-4">
+        <h2 class="h4">8. Contact</h2>
+        <p>
+            This is a student coursework project and is not a commercial service. Questions
+            about this policy can be directed to the site administrator through the account
+            management options available after logging in.
+        </p>
+    </section>
+</article>

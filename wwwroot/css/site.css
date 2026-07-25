@@ -72,10 +72,80 @@ body {
 
 .navbar .nav-link {
   color: var(--gs-text-primary) !important;
+  position: relative;
+  border-bottom: 3px solid transparent;
+  padding-bottom: 0.3rem;
 }
 
 .navbar .nav-link:hover {
   color: var(--gs-accent) !important;
+}
+
+/* Active-page indicator: a small bar in the theme accent color, right
+   under the nav link for whichever section (Resources / Categories /
+   Forum) the current page belongs to. Not shown on the Home page. */
+.navbar .nav-link.active-nav-link {
+  border-bottom-color: var(--gs-accent);
+}
+
+/* Full-bleed page banner used on Resource / Category / Forum index
+   pages in place of a plain <h1>. Same gradient as the homepage hero,
+   shorter, and stretched edge-to-edge via the 100vw breakout technique
+   while its inner .container keeps left/right content aligned with the
+   rest of the page. */
+.page-banner {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: -1rem;
+  background: linear-gradient(135deg, var(--gs-hero-start) 0%, var(--gs-hero-end) 100%);
+  padding: 1.1rem 0;
+  margin-bottom: 1.5rem;
+}
+
+.page-banner-text {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+/* Rounded, card-style tables for the Resource / Category list pages.
+   Wrap the <table> in a .table-card div — border-radius on the table
+   itself doesn't reliably clip cell backgrounds across browsers, so the
+   rounding + overflow:hidden lives on this outer wrapper instead. */
+.table-card {
+  border: 1px solid var(--gs-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.table-card table {
+  margin-bottom: 0;
+}
+
+.table-card thead th {
+  background-color: var(--gs-border);
+  color: var(--gs-text-primary);
+  border-bottom: none;
+  font-weight: 600;
+}
+
+.table-card tbody tr {
+  background-color: var(--gs-bg-card);
+}
+
+.table-card tbody tr:hover {
+  background-color: var(--gs-border);
+}
+
+.table-card td,
+.table-card th {
+  padding: 0.85rem 1.1rem;
+  border-color: var(--gs-border);
+  vertical-align: middle;
 }
 
 .navbar-brand {
@@ -174,31 +244,35 @@ body {
 }
 
 /* Reply / Delete small text-links (icon + label), matching the
-   author line's font size rather than looking like buttons. */
-.comment-action-link {
+   author line's font size rather than looking like buttons. Reply is an
+   <a>, Delete is a <button> (inside a form) — both classes are combined
+   into ONE rule so every property is guaranteed identical between them;
+   two separate partial-reset rules previously drifted apart because a
+   `font` shorthand on the button accidentally reset its font-size too. */
+.comment-action-link,
+.comment-action-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.3rem;
+  font-family: inherit;
   font-size: 0.8rem;
+  font-weight: 400;
+  line-height: 1;
   color: var(--gs-text-muted);
   text-decoration: none;
   cursor: pointer;
-}
-
-.comment-action-link:hover {
-  color: var(--gs-accent);
-  text-decoration: underline;
-}
-
-.comment-action-btn {
   background: none;
   border: none;
   margin: 0;
   padding: 0;
-  font: inherit;
-  line-height: inherit;
   vertical-align: baseline;
   user-select: text;
+}
+
+.comment-action-link:hover,
+.comment-action-btn:hover {
+  color: var(--gs-accent);
+  text-decoration: underline;
 }
 
 /* Circular reveal animation for the light/dark theme toggle.
@@ -399,3 +473,47 @@ footer {
   color: var(--gs-text-muted);
   padding: 1rem 0;
 }
+
+/* canvas-nest.js injects its <canvas> as the last child of <body> with
+   a low z-index (see the "showParticleBackground" script tag in
+   _Layout.cshtml). html/body already have an opaque theme background
+   color, so the canvas is given z-index: 0 to paint above that base
+   layer — and real page chrome is explicitly raised above it so it
+   stays fully visible, with the animation only showing through the
+   page's empty margins and gaps around content.
+   header gets a HIGHER z-index than the main content/footer (not the
+   same value) — otherwise, since body > .container comes later in the
+   DOM at an equal z-index, it would paint on top of header and trap
+   the account dropdown menu (which lives inside header) underneath
+   page content like the hero banner or tables. */
+header {
+  position: relative;
+  z-index: 20;
+}
+
+/* Account dropdown open/close animation. Bootstrap toggles dropdowns
+   via display:none/block by default, which can't be transitioned —
+   so instead the menu always stays display:block and is hidden via
+   opacity/visibility, which CAN be animated smoothly. */
+.dropdown-menu {
+  display: block !important;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-8px);
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+  pointer-events: none;
+}
+
+.dropdown-menu.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+body > .container,
+footer {
+  position: relative;
+  z-index: 1;
+}
+
