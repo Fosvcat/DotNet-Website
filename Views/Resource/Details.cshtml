@@ -1,62 +1,90 @@
 @model Geekspace.Models.LearningResource
+@using Geekspace.ViewModels
 
 @{
     ViewData["Title"] = Model.Title;
+    var isPythonSecurityArticle = Model.Title == "Python Scripting for Security Automation";
+    var hasProfessionalLayout = isPythonSecurityArticle || ProfessionalResourceCatalog.Contains(Model.Title);
+    IEnumerable<Geekspace.Models.ResourceComment> resourceComments =
+        Model.Comments ?? Enumerable.Empty<Geekspace.Models.ResourceComment>();
 }
 
-<article>
-    <header class="mb-3">
-        <h1 class="fw-bold display-6">@Model.Title</h1>
-        <p class="fs-5 text-muted mb-2">@Model.Type</p>
-        <p class="small text-muted mb-0">
-            <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
-            <span class="mx-2">&middot;</span>
-            <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
-        </p>
-    </header>
+@if (isPythonSecurityArticle)
+{
+    <partial name="_PythonSecurityArticle" model="Model" />
+}
+else if (ProfessionalResourceCatalog.Contains(Model.Title))
+{
+    <partial name="_ProfessionalResourceArticle" model="Model" />
+}
+else
+{
+    <article>
+        <header class="mb-3">
+            <h1 class="fw-bold display-6">@Model.Title</h1>
+            <p class="fs-5 text-muted mb-2">@Model.Type</p>
+            <p class="small text-muted mb-0">
+                <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
+                <span class="mx-2">&middot;</span>
+                <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+            </p>
+        </header>
 
-    <hr />
+        <hr />
 
-    @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
-    {
-        var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
-        var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+        @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+        {
+            var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
+            var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
 
-        <div class="mb-4">
-            @if (videoExtensions.Contains(extension))
-            {
-                <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
-                    <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
-                    Your browser does not support the video tag.
-                </video>
-            }
-            else
-            {
-                <figure class="figure">
-                    <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
-                    <figcaption class="figure-caption">@Model.Title</figcaption>
-                </figure>
-            }
+            <div class="mb-4">
+                @if (videoExtensions.Contains(extension))
+                {
+                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
+                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else
+                {
+                    <figure class="figure">
+                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
+                        <figcaption class="figure-caption">@Model.Title</figcaption>
+                    </figure>
+                }
+            </div>
+        }
+
+        <div class="p-3 mb-4 border rounded bg-body-tertiary">
+            @Model.Description
         </div>
-    }
 
-    <div class="p-3 mb-4 border rounded bg-body-tertiary">
-        @Model.Description
-    </div>
+        <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
+    </article>
+}
 
-    <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
-</article>
-
-<div class="mt-4 mb-2 d-flex gap-2">
+<div class="@(hasProfessionalLayout ? "python-community-shell" : "")">
+<div class="site-page-actions mt-4 mb-2">
     @if (User.IsInRole("Admin") || User.IsInRole("Root"))
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="site-action-btn site-action-edit">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M12 20h9"></path>
+                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+            </svg>
+            <span>Edit</span>
+        </a>
     }
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    <a asp-action="Index" class="site-action-btn site-action-back">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 12H5M11 18l-6-6 6-6"></path>
+        </svg>
+        <span>Back to List</span>
+    </a>
 </div>
 
 <hr />
-<h3>Discussion (@Model.Comments.Count())</h3>
+<h3>Discussion (@resourceComments.Count())</h3>
 
 @if (TempData["CommentError"] != null)
 {
@@ -67,7 +95,7 @@
 {
     <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
         @Html.AntiForgeryToken()
-        <input type="hidden" name="learningResourceId" value="@Model.Id" />
+        <input type="hidden" name="learningResourceId" value="@Model?.Id" />
         <div class="form-group">
             <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
         </div>
@@ -79,4 +107,5 @@ else
     <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
 }
 
-<partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />
+<partial name="_CommentList" model="resourceComments.OrderByDescending(c => c.PostedDate)" />
+</div>

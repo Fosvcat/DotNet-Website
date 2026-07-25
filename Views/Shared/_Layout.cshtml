@@ -34,8 +34,12 @@
             (currentController == "Category" && currentAction == "Index") ||
             (currentController == "Forum" && currentAction == "Index");
     }
+    @if (showParticleBackground)
+    {
+        <canvas id="themeAmbientCanvas" class="theme-ambient-canvas" aria-hidden="true"></canvas>
+    }
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm border-bottom box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Geekspace</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -156,10 +160,6 @@
             });
         });
     </script>
-    @if (showParticleBackground)
-    {
-        <script color="67,97,238" opacity="0.75" zIndex="0" count="110" src="~/lib/canvas-nest/canvas-nest.js"></script>
-    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
