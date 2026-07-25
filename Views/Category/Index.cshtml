@@ -30,7 +30,7 @@
         {
             <tr>
                 <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                <td><div class="category-description-cell">@Html.DisplayFor(modelItem => item.Description)</div></td>
                 <td>
                     @if (User.IsInRole("Admin") || User.IsInRole("Root"))
                     {

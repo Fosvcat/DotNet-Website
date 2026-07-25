@@ -148,6 +148,17 @@ body {
   vertical-align: middle;
 }
 
+/* Category list: cap the Description column at roughly two-thirds of
+   its previous width and clamp to two lines with an ellipsis, so the
+   Edit / Details / Delete links at the end of the row aren't crowded. */
+.category-description-cell {
+  max-width: 240px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .navbar-brand {
   background: linear-gradient(135deg, #364ebe 0%, #4361ee 100%);
   -webkit-background-clip: text;
