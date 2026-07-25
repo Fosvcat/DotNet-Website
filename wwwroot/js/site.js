@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initHeroTypewriter();
     initThemeAmbientBackground();
     initSecurityKnowledgeCheck();
+    initShareButtons();
 });
 
 function initSecurityKnowledgeCheck() {
@@ -655,4 +656,48 @@ function initHeroTypewriter() {
     }
 
     type();
+}
+
+// "Copy link" share button: copies the article URL to the clipboard
+// and shows a brief "Link copied!" toast next to the button. The
+// Telegram/WhatsApp/LinkedIn/X buttons are plain links (target="_blank")
+// and need no JS.
+function initShareButtons() {
+    var copyBtn = document.getElementById('copyLinkBtn');
+    if (!copyBtn) {
+        return;
+    }
+
+    copyBtn.addEventListener('click', function () {
+        var url = copyBtn.getAttribute('data-share-url');
+
+        if (!navigator.clipboard) {
+            showShareToast(copyBtn, 'Could not copy link');
+            return;
+        }
+
+        navigator.clipboard.writeText(url)
+            .then(function () {
+                showShareToast(copyBtn, 'Link copied!');
+            })
+            .catch(function () {
+                showShareToast(copyBtn, 'Could not copy link');
+            });
+    });
+}
+
+function showShareToast(anchorEl, message) {
+    var existing = anchorEl.querySelector('.share-toast');
+    if (existing) {
+        existing.remove();
+    }
+
+    var toast = document.createElement('span');
+    toast.className = 'share-toast';
+    toast.textContent = message;
+    anchorEl.appendChild(toast);
+
+    window.setTimeout(function () {
+        toast.remove();
+    }, 1800);
 }

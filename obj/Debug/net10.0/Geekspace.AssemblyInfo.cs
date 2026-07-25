@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Geekspace")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+cd46b3b581d274215cab702c8324ff9ed9036b0d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+36860b043465c2a82cbaffe70d952d793dafbe6a")]
 [assembly: System.Reflection.AssemblyProductAttribute("Geekspace")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Geekspace")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

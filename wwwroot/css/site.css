@@ -1270,43 +1270,37 @@ body {
   border-radius: 6px;
 }
 
-/* Resource Details layout: a full-bleed shell (same 100vw breakout
-   technique used by .page-banner) with three tracks — two equal
-   flexible gutters flanking a fixed-width reading column, so the
-   article body is genuinely centered whether or not a TOC is present.
-   The TOC sits inside the right gutter, pushed to its far edge, so it
-   can extend past the .container-constrained navbar/footer on wide
-   screens. */
+/* Resource Details layout: a simple two-column grid living inside the
+   normal .container boundary — same left/right edges as the hero above
+   it. The body column is flexible (not a fixed width), so any leftover
+   horizontal space on wide screens goes toward widening the reading
+   column rather than sitting unused; the TOC stays a fixed width and
+   naturally lands flush with the container's right edge as the last
+   grid track. */
 .resource-layout-shell {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  margin-left: -50vw;
   margin-top: 1.75rem;
   display: grid;
-  grid-template-columns: 1fr minmax(0, 900px) 1fr;
-  column-gap: 2rem;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  column-gap: 1.5rem;
   align-items: start;
 }
 
 .resource-body-column {
-  grid-column: 2;
+  grid-column: 1;
   min-width: 0;
 }
 
 .resource-toc-sidebar {
-  grid-column: 3;
-  justify-self: end;
+  grid-column: 2;
   position: sticky;
   top: 1.5rem;
   width: 260px;
   max-width: 100%;
-  padding-right: 3.5rem;
 }
 
 .resource-toc-sidebar p {
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--gs-text-muted);
@@ -1350,10 +1344,6 @@ body {
 @media (max-width: 992px) {
   .resource-layout-shell {
     display: block;
-    width: 100%;
-    position: static;
-    left: auto;
-    margin-left: 0;
   }
 
   .resource-body-column {
@@ -1400,6 +1390,65 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* Share buttons on the article detail page: rounded-square, filled
+   with the theme accent color, monochrome icon. */
+.share-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--gs-accent);
+  color: var(--gs-accent-contrast);
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.share-btn svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.share-btn.share-btn-x svg {
+  fill: currentColor;
+  stroke: none;
+}
+
+.share-btn:hover {
+  background-color: var(--gs-accent-hover);
+  color: var(--gs-accent-contrast);
+  transform: translateY(-2px);
+}
+
+.share-toast {
+  position: absolute;
+  bottom: 44px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--gs-text-primary);
+  color: var(--gs-bg-body);
+  font-size: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  animation: share-toast-fade 1.8s ease forwards;
+}
+
+@keyframes share-toast-fade {
+  0% { opacity: 0; transform: translateX(-50%) translateY(4px); }
+  15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+  80% { opacity: 1; }
+  100% { opacity: 0; }
 }
 
 /* Comment like / dislike buttons.
