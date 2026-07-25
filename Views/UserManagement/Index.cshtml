@@ -18,6 +18,7 @@
             <th>User</th>
             <th>Email</th>
             <th>Role</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -30,6 +31,11 @@
                 <td>
                     <span class="badge @(u.Role == "Root" ? "bg-danger" : u.Role == "Admin" ? "bg-warning text-dark" : "bg-secondary")">
                         @u.Role
+                    </span>
+                </td>
+                <td>
+                    <span class="badge @(u.IsBanned ? "bg-danger" : "bg-success")">
+                        @(u.IsBanned ? "Ban" : "Normal")
                     </span>
                 </td>
                 <td>
@@ -49,6 +55,31 @@
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-sm btn-warning">Demote to User</button>
                         </form>
+                    }
+
+                    @{
+                        bool isSelf = u.Id == ViewBag.CurrentUserId as string;
+                        bool canBan = !isSelf && u.Role != "Root" &&
+                            (User.IsInRole("Root") || (User.IsInRole("Admin") && u.Role == "User"));
+                    }
+                    @if (canBan)
+                    {
+                        @if (u.IsBanned)
+                        {
+                            <form asp-action="Unban" asp-route-id="@u.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Unban this account?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-warning">Unban</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <form asp-action="Ban" asp-route-id="@u.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('Ban this account? They will be immediately signed out and unable to log in.');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-danger">Ban</button>
+                            </form>
+                        }
                     }
 
                     @{

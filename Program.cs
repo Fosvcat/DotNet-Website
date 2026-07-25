@@ -14,6 +14,18 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+// Identity's cookie auth re-validates a signed-in user's security stamp
+// against the database on a timer (default: every 30 minutes) — if it
+// doesn't match (or the account no longer exists), the user is signed
+// out automatically. Banning/deleting an account bumps the security
+// stamp (see UserManagementController), so shortening this interval is
+// what makes a ban take effect on the banned user's browser quickly
+// instead of up to half an hour later.
+builder.Services.Configure<SecurityStampValidatorOptions>(options =>
+{
+    options.ValidationInterval = TimeSpan.FromSeconds(30);
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();

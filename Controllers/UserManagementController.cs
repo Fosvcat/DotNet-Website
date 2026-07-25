@@ -33,6 +33,8 @@ namespace Geekspace.Controllers
         // GET: UserManagement
         public async Task<IActionResult> Index()
         {
+            ViewBag.CurrentUserId = _userManager.GetUserId(User);
+
             var users = _userManager.Users.ToList();
             var list = new List<UserListItem>();
 
@@ -43,7 +45,8 @@ namespace Geekspace.Controllers
                     Id = u.Id,
                     UserName = u.UserName ?? "(no username)",
                     Email = u.Email ?? "(no email)",
-                         Role = await GetRoleAsync(u)
+                         Role = await GetRoleAsync(u),
+                         IsBanned = await _userManager.IsLockedOutAsync(u)
                 });
             }
 
@@ -102,6 +105,80 @@ namespace Geekspace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // Root may ban/unban any Admin or User (never Root, never itself).
+        // Admin may ban/unban only plain User accounts (never itself,
+        // never other Admins or Root).
+        private bool CanBan(string targetRole, bool isSelf)
+        {
+            if (isSelf || targetRole == "Root")
+            {
+                return false;
+            }
+
+            if (User.IsInRole("Root"))
+            {
+                return true;
+            }
+
+            if (User.IsInRole("Admin"))
+            {
+                return targetRole == "User";
+            }
+
+            return false;
+        }
+
+        // POST: UserManagement/Ban/{id}
+        // Bans by setting a permanent lockout on the account. Identity's
+        // sign-in check already rejects locked-out accounts on the next
+        // login attempt; bumping the security stamp also signs the user
+        // out of any session they're currently using (see the
+        // SecurityStampValidatorOptions configured in Program.cs).
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Ban(string id)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var target = await _userManager.FindByIdAsync(id);
+            if (target == null) return NotFound();
+
+            var targetRole = await GetRoleAsync(target);
+            bool isSelf = id == currentUserId;
+
+            if (!CanBan(targetRole, isSelf))
+            {
+                return Forbid();
+            }
+
+            await _userManager.SetLockoutEnabledAsync(target, true);
+            await _userManager.SetLockoutEndDateAsync(target, DateTimeOffset.MaxValue);
+            await _userManager.UpdateSecurityStampAsync(target);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // POST: UserManagement/Unban/{id}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unban(string id)
+        {
+            var currentUserId = _userManager.GetUserId(User);
+            var target = await _userManager.FindByIdAsync(id);
+            if (target == null) return NotFound();
+
+            var targetRole = await GetRoleAsync(target);
+            bool isSelf = id == currentUserId;
+
+            if (!CanBan(targetRole, isSelf))
+            {
+                return Forbid();
+            }
+
+            await _userManager.SetLockoutEndDateAsync(target, null);
+
+            return RedirectToAction(nameof(Index));
+        }
+
         // POST: UserManagement/Delete/{id}
         // Root may delete Admin or User accounts (but never Root, never itself).
         // Admin may delete only plain User accounts.
@@ -136,6 +213,9 @@ namespace Geekspace.Controllers
                 return Forbid();
             }
 
+            // Reset the ban status before deleting, so a stale permanent
+            // lockout can never resurface if this id/email is ever reused.
+            await _userManager.SetLockoutEndDateAsync(target, null);
             await _userManager.DeleteAsync(target);
             return RedirectToAction(nameof(Index));
         }

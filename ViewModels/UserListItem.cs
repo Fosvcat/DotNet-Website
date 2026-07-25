@@ -11,5 +11,7 @@ namespace Geekspace.ViewModels
 
         // "Root", "Admin", or "User"
         public string Role { get; set; } = "User";
+
+        public bool IsBanned { get; set; }
     }
 }
