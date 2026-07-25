@@ -56,6 +56,13 @@ else
                                 @comment.LearningResource.Title
                             </a>
                         }
+                        else if (comment.QuestionId.HasValue)
+                        {
+                            var quiz = Geekspace.Models.QuestionsCatalog.Get(comment.QuestionId.Value);
+                            <a asp-controller="Questions" asp-action="Details" asp-route-id="@comment.QuestionId">
+                                @(quiz?.Title ?? "Questions")
+                            </a>
+                        }
                         else
                         {
                             <a asp-controller="Forum" asp-action="Index">Forum</a>

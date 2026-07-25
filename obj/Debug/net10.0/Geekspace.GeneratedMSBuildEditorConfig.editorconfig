@@ -122,6 +122,14 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvTm90aWZpY2F0aW9uL0luZGV4LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Questions/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUXVlc3Rpb25zL0RldGFpbHMuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Questions/Index.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUXVlc3Rpb25zL0luZGV4LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Create.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvQ3JlYXRlLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
@@ -140,14 +148,6 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/Index.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvSW5kZXguY3NodG1s
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/_ProfessionalResourceArticle.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvX1Byb2Zlc3Npb25hbFJlc291cmNlQXJ0aWNsZS5jc2h0bWw=
-build_metadata.AdditionalFiles.CssScope = 
-
-[/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Resource/_PythonSecurityArticle.cshtml]
-build_metadata.AdditionalFiles.TargetPath = Vmlld3MvUmVzb3VyY2UvX1B5dGhvblNlY3VyaXR5QXJ0aWNsZS5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/home/fosvcat/Projects/GitHub/DotNet-Website/Views/Shared/Components/NotificationBell/Default.cshtml]

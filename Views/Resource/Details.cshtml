@@ -1,35 +1,47 @@
 @model Geekspace.Models.LearningResource
-@using Geekspace.ViewModels
 
 @{
     ViewData["Title"] = Model.Title;
-    var isPythonSecurityArticle = Model.Title == "Python Scripting for Security Automation";
-    var hasProfessionalLayout = isPythonSecurityArticle || ProfessionalResourceCatalog.Contains(Model.Title);
+    var tocEntries = ViewBag.TocEntries as List<(int Level, string Text, string Id)> ?? new List<(int Level, string Text, string Id)>();
+    var readingTimeMinutes = ViewBag.ReadingTimeMinutes as int? ?? 1;
 }
 
-@if (isPythonSecurityArticle)
-{
-    <partial name="_PythonSecurityArticle" model="Model" />
-}
-else if (ProfessionalResourceCatalog.Contains(Model.Title))
-{
-    <partial name="_ProfessionalResourceArticle" model="Model" />
-}
-else
-{
-    <article>
-        <header class="mb-3">
-            <h1 class="fw-bold display-6">@Model.Title</h1>
-            <p class="fs-5 text-muted mb-2">@Model.Type</p>
-            <p class="small text-muted mb-0">
-                <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
-                <span class="mx-2">&middot;</span>
-                <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
-            </p>
-        </header>
+<header class="python-article-hero">
+    <h1>@Model.Title</h1>
+    <p class="python-article-lead">@Model.Description</p>
 
-        <hr />
+    <div class="python-article-meta" aria-label="Resource information">
+        <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M4 5.5h16v13H4zM8 3v5M16 3v5M4 9h16"></path>
+            </svg>
+            @Model.CreatedDate.ToString("dd MMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+        </span>
+        <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="8"></circle>
+                <path d="M12 8v4l3 2"></path>
+            </svg>
+            @readingTimeMinutes min read
+        </span>
+        <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
+            </svg>
+            @(Model.Category?.Name ?? "Uncategorized")
+        </span>
+        <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M20.59 13.41 13 21l-9-9V4h8l8.59 8.59a2 2 0 0 1 0 2.82Z"></path>
+                <line x1="7" y1="7" x2="7.01" y2="7"></line>
+            </svg>
+            @Model.Type
+        </span>
+    </div>
+</header>
 
+<div class="resource-layout-shell">
+    <div class="resource-body-column">
         @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
         {
             var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
@@ -67,48 +79,55 @@ else
             </a>
         }
 
-        <div class="p-3 mb-4 border rounded bg-body-tertiary">
-            @Model.Description
-        </div>
-
         <div class="resource-content markdown-body">
             @Html.Raw((string)ViewBag.ContentHtml)
         </div>
-    </article>
-}
-
-<div class="@(hasProfessionalLayout ? "python-community-shell" : "")">
-    <div class="mt-4 mb-2 d-flex gap-2">
-        @if (User.IsInRole("Admin") || User.IsInRole("Root"))
-        {
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
-        }
-        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
     </div>
 
-    <hr />
-    <h3>Discussion (@Model.Comments.Count())</h3>
-
-    @if (TempData["CommentError"] != null)
+    @if (tocEntries.Count > 0)
     {
-        <div class="alert alert-danger">@TempData["CommentError"]</div>
+        <aside class="resource-toc-sidebar" aria-label="On this page">
+            <p>On this page</p>
+            <nav>
+                @foreach (var entry in tocEntries)
+                {
+                    <a href="#@entry.Id" class="resource-toc-level-@entry.Level">@entry.Text</a>
+                }
+            </nav>
+        </aside>
     }
-
-    @if (User.Identity != null && User.Identity.IsAuthenticated)
-    {
-        <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="learningResourceId" value="@Model.Id" />
-            <div class="form-group">
-                <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
-            </div>
-            <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
-        </form>
-    }
-    else
-    {
-        <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
-    }
-
-    <partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />
 </div>
+
+<div class="mt-4 mb-2 d-flex gap-2">
+    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
+    }
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+</div>
+
+<hr />
+<h3>Discussion (@Model.Comments.Count())</h3>
+
+@if (TempData["CommentError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CommentError"]</div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="learningResourceId" value="@Model.Id" />
+        <div class="form-group">
+            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+}
+
+<partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />

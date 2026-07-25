@@ -9,6 +9,8 @@ using Geekspace.Data;
 using Geekspace.Models;
 using Microsoft.AspNetCore.Authorization;
 using Markdig;
+using Markdig.Renderers.Html;
+using Markdig.Syntax;
 using Microsoft.AspNetCore.Identity;
 
 namespace Geekspace.Controllers
@@ -231,16 +233,74 @@ namespace Geekspace.Controllers
                 ViewBag.MyVotes = myVotes;
             }
 
-            // Render the article body from Markdown to HTML. Markdig's
-            // default pipeline does not pass through raw <script> tags or
-            // arbitrary embedded HTML, so this is safe to output directly
-            // even though the source is user-submitted text.
+            // Parse the Markdown once, then both render it to HTML and
+            // walk the parsed tree to build a table of contents from its
+            // headings. Reusing the same parsed document guarantees the
+            // heading ids used in the TOC links exactly match the ids
+            // Markdig assigned when rendering (via UseAdvancedExtensions'
+            // auto-identifier extension).
             var markdownPipeline = new MarkdownPipelineBuilder()
                 .UseAdvancedExtensions()
                 .Build();
-            ViewBag.ContentHtml = Markdown.ToHtml(learningResource.Content ?? string.Empty, markdownPipeline);
+
+            var markdownDocument = Markdown.Parse(learningResource.Content ?? string.Empty, markdownPipeline);
+            ViewBag.ContentHtml = Markdown.ToHtml(markdownDocument, markdownPipeline);
+
+            var tocEntries = new List<(int Level, string Text, string Id)>();
+            foreach (var block in markdownDocument.Descendants().OfType<Markdig.Syntax.HeadingBlock>())
+            {
+                if (block.Level > 3)
+                {
+                    continue;
+                }
+
+                var headingText = GetPlainText(block.Inline);
+                var headingId = block.GetAttributes()?.Id;
+
+                if (!string.IsNullOrWhiteSpace(headingText) && !string.IsNullOrWhiteSpace(headingId))
+                {
+                    tocEntries.Add((block.Level, headingText, headingId!));
+                }
+            }
+            ViewBag.TocEntries = tocEntries;
+
+            // A simple, standard "X min read" estimate from word count
+            // (~200 words per minute), since resources don't have their
+            // own authored reading-time field.
+            var wordCount = (learningResource.Content ?? string.Empty)
+                .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)
+                .Length;
+            ViewBag.ReadingTimeMinutes = Math.Max(1, (int)Math.Ceiling(wordCount / 200.0));
 
             return View(learningResource);
+        }
+
+        // Flattens a Markdig inline tree (bold/italic/plain text, etc.)
+        // into plain text, for use as a table-of-contents entry label.
+        private static string GetPlainText(Markdig.Syntax.Inlines.ContainerInline? container)
+        {
+            if (container == null)
+            {
+                return string.Empty;
+            }
+
+            var builder = new System.Text.StringBuilder();
+            foreach (var inline in container)
+            {
+                switch (inline)
+                {
+                    case Markdig.Syntax.Inlines.LiteralInline literal:
+                        builder.Append(literal.Content.ToString());
+                        break;
+                    case Markdig.Syntax.Inlines.ContainerInline nested:
+                        builder.Append(GetPlainText(nested));
+                        break;
+                    case Markdig.Syntax.Inlines.LineBreakInline:
+                        builder.Append(' ');
+                        break;
+                }
+            }
+            return builder.ToString();
         }
 
         // GET: Resource/Delete/5

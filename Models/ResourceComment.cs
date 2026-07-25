@@ -11,6 +11,13 @@ namespace Geekspace.Models
         public int? LearningResourceId { get; set; }
         public LearningResource? LearningResource { get; set; }
 
+        // Set = a comment on a /Questions/{id} quiz page's discussion
+        // section. Questions are not database-backed (see
+        // QuestionsCatalog), so this is a plain integer tag, not a real
+        // foreign key — a comment belongs to exactly one of
+        // LearningResourceId, QuestionId, or neither (a Forum post).
+        public int? QuestionId { get; set; }
+
         [Required]
         public string UserId { get; set; } = string.Empty;
 

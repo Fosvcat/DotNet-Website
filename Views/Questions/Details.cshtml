@@ -1,0 +1,88 @@
+@model Geekspace.Models.QuizContent
+@using System.Security.Claims
+
+@{
+    ViewData["Title"] = Model.Title;
+    var comments = ViewBag.Comments as IEnumerable<Geekspace.Models.ResourceComment> ?? Enumerable.Empty<Geekspace.Models.ResourceComment>();
+}
+
+<header class="python-article-hero">
+    <div class="python-article-kicker">
+        <span class="python-article-kicker-mark" aria-hidden="true"></span>
+        <span>Knowledge Check</span>
+        <span class="python-article-version">Quiz @Model.Id.ToString("00")</span>
+    </div>
+
+    <h1>@Model.Title</h1>
+    <p class="python-article-lead">@Model.Description</p>
+
+    <div class="python-article-meta" aria-label="Quiz information">
+        <span>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 2-3 4"></path>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>
+            @Model.Questions.Length questions
+        </span>
+    </div>
+</header>
+
+<div class="quiz-standalone-wrapper">
+    <form class="python-quiz" data-security-quiz>
+        @for (var questionIndex = 0; questionIndex < Model.Questions.Length; questionIndex++)
+        {
+            var question = Model.Questions[questionIndex];
+            var inputName = $"quiz-{Model.Id}-q{questionIndex + 1}";
+            <fieldset class="python-question" data-correct-answer="@question.CorrectValue">
+                <legend>
+                    <span>Question @((questionIndex + 1).ToString("00"))</span>
+                    @question.Prompt
+                </legend>
+                @foreach (var option in question.Options)
+                {
+                    <label>
+                        <input type="radio" name="@inputName" value="@option.Value" />
+                        @option.Text
+                    </label>
+                }
+                <p class="python-question-feedback" aria-live="polite"></p>
+            </fieldset>
+        }
+
+        <div class="python-quiz-actions">
+            <button type="button" class="python-quiz-submit" data-quiz-submit>Check answers</button>
+            <p class="python-quiz-result" data-quiz-result aria-live="polite"></p>
+        </div>
+    </form>
+</div>
+
+<div class="mt-4 mb-2 d-flex gap-2">
+    <a asp-action="Index" class="btn btn-outline-secondary">Back to Questions</a>
+</div>
+
+<hr />
+<h3>Discussion (@comments.Count())</h3>
+
+@if (TempData["CommentError"] != null)
+{
+    <div class="alert alert-danger">@TempData["CommentError"]</div>
+}
+
+@if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="questionId" value="@Model.Id" />
+        <div class="form-group">
+            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+    </form>
+}
+else
+{
+    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+}
+
+<partial name="_CommentList" model="comments.OrderByDescending(c => c.PostedDate)" />

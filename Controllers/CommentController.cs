@@ -26,26 +26,23 @@ namespace Geekspace.Controllers
         }
 
         // POST: Comment/Create
-        // learningResourceId is nullable: present = a comment on that
-        // resource's discussion section, absent = a standalone Forum post.
+        // learningResourceId / questionId are mutually exclusive nullable
+        // markers: a comment belongs to a resource, a quiz page, or
+        // neither (a Forum post). See ResourceComment.cs.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? learningResourceId, string content, int? parentCommentId)
+        public async Task<IActionResult> Create(int? learningResourceId, int? questionId, string content, int? parentCommentId)
         {
             if (string.IsNullOrWhiteSpace(content))
             {
                 TempData["CommentError"] = "Comment cannot be empty.";
-                return learningResourceId.HasValue
-                    ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
-                    : RedirectToAction("Index", "Forum");
+                return RedirectToContext(learningResourceId, questionId);
             }
 
             if (content.Length > 1000)
             {
                 TempData["CommentError"] = "Comment cannot exceed 1000 characters.";
-                return learningResourceId.HasValue
-                    ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
-                    : RedirectToAction("Index", "Forum");
+                return RedirectToContext(learningResourceId, questionId);
             }
 
             var userId = _userManager.GetUserId(User);
@@ -53,6 +50,7 @@ namespace Geekspace.Controllers
             var comment = new ResourceComment
             {
                 LearningResourceId = learningResourceId,
+                QuestionId = questionId,
                 UserId = userId!,
                 Content = content,
                 PostedDate = DateTime.Now,
@@ -82,9 +80,25 @@ namespace Geekspace.Controllers
                 }
             }
 
-            return learningResourceId.HasValue
-                ? RedirectToAction("Details", "Resource", new { id = learningResourceId })
-                : RedirectToAction("Index", "Forum");
+            return RedirectToContext(learningResourceId, questionId);
+        }
+
+        // Resolves which page a comment "belongs to" and returns the
+        // matching redirect: a resource's Details page, a Questions
+        // Details page, or the Forum index when neither is set.
+        private IActionResult RedirectToContext(int? learningResourceId, int? questionId)
+        {
+            if (learningResourceId.HasValue)
+            {
+                return RedirectToAction("Details", "Resource", new { id = learningResourceId });
+            }
+
+            if (questionId.HasValue)
+            {
+                return RedirectToAction("Details", "Questions", new { id = questionId });
+            }
+
+            return RedirectToAction("Index", "Forum");
         }
 
         // POST: Comment/Vote
@@ -240,12 +254,11 @@ namespace Geekspace.Controllers
             }
 
             int? resourceId = comment.LearningResourceId;
+            int? questionId = comment.QuestionId;
             _context.ResourceComments.Remove(comment);
             await _context.SaveChangesAsync();
 
-            return resourceId.HasValue
-                ? RedirectToAction("Details", "Resource", new { id = resourceId })
-                : RedirectToAction("Index", "Forum");
+            return RedirectToContext(resourceId, questionId);
         }
     }
 }

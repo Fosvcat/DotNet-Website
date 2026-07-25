@@ -36,9 +36,19 @@ else
             <tbody>
                 @foreach (var notification in Model)
                 {
-                    string viewUrl = notification.Comment?.LearningResourceId != null
-                        ? Url.Action("Details", "Resource", new { id = notification.Comment.LearningResourceId }) + "#comment-" + notification.CommentId
-                        : Url.Action("Index", "Forum") + "#comment-" + notification.CommentId;
+                    string viewUrl;
+                    if (notification.Comment?.LearningResourceId != null)
+                    {
+                        viewUrl = Url.Action("Details", "Resource", new { id = notification.Comment.LearningResourceId }) + "#comment-" + notification.CommentId;
+                    }
+                    else if (notification.Comment?.QuestionId != null)
+                    {
+                        viewUrl = Url.Action("Details", "Questions", new { id = notification.Comment.QuestionId }) + "#comment-" + notification.CommentId;
+                    }
+                    else
+                    {
+                        viewUrl = Url.Action("Index", "Forum") + "#comment-" + notification.CommentId;
+                    }
 
                     <tr id="notification-row-@notification.Id">
                         <td style="width: 24px;">
@@ -72,6 +82,11 @@ else
                             @if (notification.Comment?.LearningResource != null)
                             {
                                 <a asp-controller="Resource" asp-action="Details" asp-route-id="@notification.Comment.LearningResourceId">@notification.Comment.LearningResource.Title</a>
+                            }
+                            else if (notification.Comment?.QuestionId != null)
+                            {
+                                var quiz = Geekspace.Models.QuestionsCatalog.Get(notification.Comment.QuestionId.Value);
+                                <a asp-controller="Questions" asp-action="Details" asp-route-id="@notification.Comment.QuestionId">@(quiz?.Title ?? "Questions")</a>
                             }
                             else
                             {

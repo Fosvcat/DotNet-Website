@@ -108,6 +108,7 @@
                     <form asp-controller="Comment" asp-action="Create" method="post">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="learningResourceId" value="@comment.LearningResourceId" />
+                        <input type="hidden" name="questionId" value="@comment.QuestionId" />
                         <input type="hidden" name="parentCommentId" value="@comment.Id" />
                         <textarea name="content" class="form-control form-control-sm" rows="2" placeholder="Write a reply..." required></textarea>
                         <button type="submit" class="btn btn-sm btn-primary mt-2">Post Reply</button>
