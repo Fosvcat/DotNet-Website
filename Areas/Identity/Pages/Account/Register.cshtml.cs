@@ -114,7 +114,8 @@ namespace Geekspace.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                var generatedUserName = await GenerateUniqueUsernameAsync(Input.Email);
+                await _userStore.SetUserNameAsync(user, generatedUserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
@@ -152,6 +153,30 @@ namespace Geekspace.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        // Generates a default username in the form "emailprefix-xxxxxx"
+        // (6 random lowercase letters/digits), re-rolling the random
+        // suffix until it finds one that isn't already taken. This runs
+        // once at account creation; the user can change it later from
+        // the Manage Account page.
+        private async Task<string> GenerateUniqueUsernameAsync(string email)
+        {
+            var prefix = email.Split('@')[0];
+            const string chars = "abcdefghijklmnopqrstuvwxyz0123456789";
+            var random = new Random();
+
+            string candidate;
+            do
+            {
+                var suffix = new string(Enumerable.Range(0, 6)
+                    .Select(_ => chars[random.Next(chars.Length)])
+                    .ToArray());
+                candidate = $"{prefix}-{suffix}";
+            }
+            while (await _userManager.FindByNameAsync(candidate) != null);
+
+            return candidate;
         }
 
         private IdentityUser CreateUser()
