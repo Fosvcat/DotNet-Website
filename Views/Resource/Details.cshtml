@@ -1,98 +1,114 @@
 @model Geekspace.Models.LearningResource
+@using Geekspace.ViewModels
 
 @{
     ViewData["Title"] = Model.Title;
+    var isPythonSecurityArticle = Model.Title == "Python Scripting for Security Automation";
+    var hasProfessionalLayout = isPythonSecurityArticle || ProfessionalResourceCatalog.Contains(Model.Title);
 }
 
-<article>
-    <header class="mb-3">
-        <h1 class="fw-bold display-6">@Model.Title</h1>
-        <p class="fs-5 text-muted mb-2">@Model.Type</p>
-        <p class="small text-muted mb-0">
-            <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
-            <span class="mx-2">&middot;</span>
-            <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
-        </p>
-    </header>
-
-    <hr />
-
-    @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
-    {
-        var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
-        var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
-
-        <div class="mb-4">
-            @if (videoExtensions.Contains(extension))
-            {
-                <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
-                    <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
-                    Your browser does not support the video tag.
-                </video>
-            }
-            else
-            {
-                <figure class="figure text-center d-block">
-                    <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
-                    <figcaption class="figure-caption">@Model.Title</figcaption>
-                </figure>
-            }
-        </div>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(Model.DownloadableFilePath))
-    {
-        var downloadFileName = System.IO.Path.GetFileName(Model.DownloadableFilePath);
-
-        <a href="@Model.DownloadableFilePath" download class="download-bar">
-            <svg class="download-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                <polyline points="7 10 12 15 17 10"></polyline>
-                <line x1="12" y1="15" x2="12" y2="3"></line>
-            </svg>
-            <span class="download-filename">@downloadFileName</span>
-        </a>
-    }
-
-    <div class="p-3 mb-4 border rounded bg-body-tertiary">
-        @Model.Description
-    </div>
-
-    <div class="resource-content markdown-body">
-        @Html.Raw((string)ViewBag.ContentHtml)
-    </div>
-</article>
-
-<div class="mt-4 mb-2 d-flex gap-2">
-    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
-    }
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-</div>
-
-<hr />
-<h3>Discussion (@Model.Comments.Count())</h3>
-
-@if (TempData["CommentError"] != null)
+@if (isPythonSecurityArticle)
 {
-    <div class="alert alert-danger">@TempData["CommentError"]</div>
+    <partial name="_PythonSecurityArticle" model="Model" />
 }
-
-@if (User.Identity != null && User.Identity.IsAuthenticated)
+else if (ProfessionalResourceCatalog.Contains(Model.Title))
 {
-    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="learningResourceId" value="@Model.Id" />
-        <div class="form-group">
-            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
-    </form>
+    <partial name="_ProfessionalResourceArticle" model="Model" />
 }
 else
 {
-    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+    <article>
+        <header class="mb-3">
+            <h1 class="fw-bold display-6">@Model.Title</h1>
+            <p class="fs-5 text-muted mb-2">@Model.Type</p>
+            <p class="small text-muted mb-0">
+                <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
+                <span class="mx-2">&middot;</span>
+                <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
+            </p>
+        </header>
+
+        <hr />
+
+        @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+        {
+            var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
+            var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+
+            <div class="mb-4">
+                @if (videoExtensions.Contains(extension))
+                {
+                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
+                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else
+                {
+                    <figure class="figure text-center d-block">
+                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
+                        <figcaption class="figure-caption">@Model.Title</figcaption>
+                    </figure>
+                }
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model.DownloadableFilePath))
+        {
+            var downloadFileName = System.IO.Path.GetFileName(Model.DownloadableFilePath);
+
+            <a href="@Model.DownloadableFilePath" download class="download-bar">
+                <svg class="download-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                    <polyline points="7 10 12 15 17 10"></polyline>
+                    <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                <span class="download-filename">@downloadFileName</span>
+            </a>
+        }
+
+        <div class="p-3 mb-4 border rounded bg-body-tertiary">
+            @Model.Description
+        </div>
+
+        <div class="resource-content markdown-body">
+            @Html.Raw((string)ViewBag.ContentHtml)
+        </div>
+    </article>
 }
 
-<partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />
+<div class="@(hasProfessionalLayout ? "python-community-shell" : "")">
+    <div class="mt-4 mb-2 d-flex gap-2">
+        @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
+        }
+        <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+    </div>
+
+    <hr />
+    <h3>Discussion (@Model.Comments.Count())</h3>
+
+    @if (TempData["CommentError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["CommentError"]</div>
+    }
+
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="learningResourceId" value="@Model.Id" />
+            <div class="form-group">
+                <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
+        </form>
+    }
+    else
+    {
+        <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
+    }
+
+    <partial name="_CommentList" model="Model.Comments.OrderByDescending(c => c.PostedDate)" />
+</div>

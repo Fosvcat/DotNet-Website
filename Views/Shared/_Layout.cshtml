@@ -34,6 +34,10 @@
             (currentController == "Category" && currentAction == "Index") ||
             (currentController == "Forum" && currentAction == "Index");
     }
+    @if (showParticleBackground)
+    {
+        <canvas id="themeAmbientCanvas" class="theme-ambient-canvas" aria-hidden="true"></canvas>
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container">
@@ -162,10 +166,6 @@
             });
         });
     </script>
-    @if (showParticleBackground)
-    {
-        <script color="67,97,238" opacity="0.75" zIndex="0" count="110" src="~/lib/canvas-nest/canvas-nest.js"></script>
-    }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

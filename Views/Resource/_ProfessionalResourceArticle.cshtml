@@ -1,0 +1,213 @@
+@model Geekspace.Models.LearningResource
+@using Geekspace.ViewModels
+
+@{
+    var content = ProfessionalResourceCatalog.Get(Model.Title);
+    var extension = System.IO.Path.GetExtension(Model.MediaUrl ?? string.Empty).ToLowerInvariant();
+    var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+    var hasMedia = !string.IsNullOrWhiteSpace(Model.MediaUrl);
+    var isVideo = hasMedia && videoExtensions.Contains(extension);
+}
+
+<article class="python-security-article professional-learning-article">
+    <header class="python-article-hero">
+        <div class="python-article-kicker">
+            <span class="python-article-kicker-mark" aria-hidden="true"></span>
+            <span>@content.FieldGuide</span>
+            <span class="python-article-version">@content.ArticleCode</span>
+        </div>
+
+        <h1>@Model.Title</h1>
+        <p class="python-article-lead">@Model.Description</p>
+
+        <div class="python-article-meta" aria-label="Resource information">
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 5.5h16v13H4zM8 3v5M16 3v5M4 9h16"></path>
+                </svg>
+                @Model.CreatedDate.ToString("dd MMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M12 8v4l3 2"></path>
+                </svg>
+                @content.ReadingTime
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 18V9M10 18V5M16 18v-7M22 18H2"></path>
+                </svg>
+                @content.Level
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
+                </svg>
+                @(Model.Category?.Name ?? "Cybersecurity")
+            </span>
+        </div>
+    </header>
+
+    <section class="python-article-visual" aria-labelledby="@($"{content.Slug}-visual-caption")">
+        <figure>
+            <div class="python-article-image-frame @(isVideo ? "professional-video-frame" : "")">
+                @if (isVideo)
+                {
+                    <video controls preload="metadata" aria-label="@content.ImageAlt">
+                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                        Your browser does not support the video tag.
+                    </video>
+                }
+                else if (hasMedia)
+                {
+                    <img src="@Model.MediaUrl"
+                         alt="@content.ImageAlt"
+                         loading="eager" />
+                }
+                else
+                {
+                    <div class="professional-topic-visual" role="img" aria-label="@content.ImageAlt">
+                        <span class="professional-topic-grid" aria-hidden="true"></span>
+                        <span class="professional-topic-code">@content.FallbackVisualCode</span>
+                        <strong>@content.FallbackVisualTitle</strong>
+                        <div>
+                            @foreach (var label in content.FallbackVisualLabels)
+                            {
+                                <span>@label</span>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <figcaption id="@($"{content.Slug}-visual-caption")">
+                <span class="python-caption-label">Visual brief</span>
+                @content.VisualCaption
+            </figcaption>
+        </figure>
+    </section>
+
+    <div class="python-reading-layout">
+        <aside class="python-article-toc" aria-label="On this page">
+            <p>On this page</p>
+            <nav>
+                @for (var sectionIndex = 0; sectionIndex < content.Sections.Length; sectionIndex++)
+                {
+                    var sectionNumber = (sectionIndex + 1).ToString("00");
+                    <a href="@($"#{content.Slug}-section-{sectionIndex + 1}")">
+                        <span>@sectionNumber</span>
+                        @content.Sections[sectionIndex].Eyebrow
+                    </a>
+                }
+                <a href="@($"#{content.Slug}-check")"><span>04</span> Knowledge check</a>
+            </nav>
+            <div class="python-toc-note">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 4 7v5c0 4.6 3.1 7.8 8 9 4.9-1.2 8-4.4 8-9V7z"></path>
+                    <path d="m9 12 2 2 4-4"></path>
+                </svg>
+                <span>Use these techniques only within approved systems, data and learning environments.</span>
+            </div>
+        </aside>
+
+        <div class="python-article-body">
+            @for (var sectionIndex = 0; sectionIndex < content.Sections.Length; sectionIndex++)
+            {
+                var sectionContent = content.Sections[sectionIndex];
+                var sectionNumber = (sectionIndex + 1).ToString("00");
+                <section id="@($"{content.Slug}-section-{sectionIndex + 1}")" class="python-content-section">
+                    <div class="python-section-heading">
+                        <span>@sectionNumber</span>
+                        <div>
+                            <p>@sectionContent.Eyebrow</p>
+                            <h2>@sectionContent.Title</h2>
+                        </div>
+                    </div>
+
+                    <p>@sectionContent.Introduction</p>
+
+                    @if (sectionContent.Cards.Length > 0)
+                    {
+                        <div class="python-insight-grid professional-card-grid @(sectionContent.Cards.Length == 4 ? "has-four-cards" : "")">
+                            @foreach (var card in sectionContent.Cards)
+                            {
+                                <article>
+                                    <span class="python-insight-icon" aria-hidden="true">@card.Marker</span>
+                                    <h3>@card.Title</h3>
+                                    <p>@card.Body</p>
+                                </article>
+                            }
+                        </div>
+                    }
+
+                    @if (sectionContent.Steps is { Length: > 0 })
+                    {
+                        <ol class="python-pipeline">
+                            @for (var stepIndex = 0; stepIndex < sectionContent.Steps.Length; stepIndex++)
+                            {
+                                var step = sectionContent.Steps[stepIndex];
+                                <li>
+                                    <span>@((stepIndex + 1).ToString("00"))</span>
+                                    <div>
+                                        <strong>@step.Title</strong>
+                                        <small>@step.Body</small>
+                                    </div>
+                                </li>
+                            }
+                        </ol>
+                    }
+
+                    @if (!string.IsNullOrWhiteSpace(sectionContent.CalloutTitle))
+                    {
+                        <aside class="python-callout">
+                            <div class="python-callout-icon" aria-hidden="true">!</div>
+                            <div>
+                                <strong>@sectionContent.CalloutTitle</strong>
+                                <p>@sectionContent.CalloutBody</p>
+                            </div>
+                        </aside>
+                    }
+                </section>
+            }
+
+            <section id="@($"{content.Slug}-check")" class="python-content-section python-knowledge-section">
+                <div class="python-section-heading">
+                    <span>04</span>
+                    <div>
+                        <p>Knowledge check</p>
+                        <h2>Apply what you learned</h2>
+                    </div>
+                </div>
+
+                <p>Choose the strongest answer for each scenario, then check your result.</p>
+
+                <form class="python-quiz" data-security-quiz>
+                    @for (var questionIndex = 0; questionIndex < content.Questions.Length; questionIndex++)
+                    {
+                        var question = content.Questions[questionIndex];
+                        var inputName = $"{content.Slug}-q{questionIndex + 1}";
+                        <fieldset class="python-question" data-correct-answer="@question.CorrectValue">
+                            <legend>
+                                <span>Question @((questionIndex + 1).ToString("00"))</span>
+                                @question.Prompt
+                            </legend>
+                            @foreach (var option in question.Options)
+                            {
+                                <label>
+                                    <input type="radio" name="@inputName" value="@option.Value" />
+                                    @option.Text
+                                </label>
+                            }
+                            <p class="python-question-feedback" aria-live="polite"></p>
+                        </fieldset>
+                    }
+
+                    <div class="python-quiz-actions">
+                        <button type="button" class="python-quiz-submit" data-quiz-submit>Check answers</button>
+                        <p class="python-quiz-result" data-quiz-result aria-live="polite"></p>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</article>
