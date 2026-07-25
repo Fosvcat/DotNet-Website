@@ -148,6 +148,17 @@ body {
   vertical-align: middle;
 }
 
+/* Resource list: keep the Description column from stretching the whole
+   row too wide, clamped to two lines with an ellipsis so there's room
+   for the View / Edit / Delete links at the end of the row. */
+.description-cell {
+  max-width: 320px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 .navbar-brand {
   background: linear-gradient(135deg, #364ebe 0%, #4361ee 100%);
   -webkit-background-clip: text;
@@ -395,6 +406,75 @@ html.theme-transitioning::view-transition-new(root) {
 
 .theme-toggle-btn:hover {
   background-color: var(--gs-border);
+}
+
+/* Which icon shows is driven purely by the data-bs-theme attribute,
+   which is already set on <html> before first paint (see the inline
+   script in <head>). This avoids any flash of the wrong icon that a
+   JS-driven swap running after DOMContentLoaded would cause. */
+.theme-toggle-btn .icon-sun {
+  display: none;
+}
+
+html[data-bs-theme="dark"] .theme-toggle-btn .icon-sun {
+  display: inline-flex;
+}
+
+html[data-bs-theme="dark"] .theme-toggle-btn .icon-moon {
+  display: none;
+}
+
+/* Notification bell — same diameter as the theme toggle button. */
+.notification-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  box-sizing: border-box;
+  border: 1px solid var(--gs-border);
+  border-radius: 999px;
+  color: var(--gs-text-muted);
+  text-decoration: none;
+  margin-right: 0.5rem;
+}
+
+.notification-bell:hover {
+  background-color: var(--gs-border);
+  color: var(--gs-text-primary);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background-color: #dc3545;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 2px 4px;
+  border-radius: 999px;
+  min-width: 16px;
+  text-align: center;
+}
+
+/* Notifications page */
+.unread-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #dc3545;
+}
+
+.notif-icon {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  vertical-align: -2px;
+  margin-right: 2px;
 }
 
 /* Cards */

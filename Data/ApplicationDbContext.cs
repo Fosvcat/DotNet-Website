@@ -10,6 +10,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<LearningResource> LearningResources { get; set; }
     public DbSet<ResourceComment> ResourceComments { get; set; }
     public DbSet<CommentVote> CommentVotes { get; set; }
+    public DbSet<Notification> Notifications { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -37,6 +38,18 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .HasOne(c => c.LearningResource)
             .WithMany(r => r.Comments)
             .HasForeignKey(c => c.LearningResourceId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // A notification always points at a specific comment — either
+        // the new reply itself, or the comment that received a vote.
+        // Cascading here means deleting that comment automatically
+        // removes any notification about it, satisfying "if the reply
+        // is deleted / the vote is undone, the notification disappears"
+        // without needing extra cleanup code anywhere else.
+        builder.Entity<Notification>()
+            .HasOne(n => n.Comment)
+            .WithMany()
+            .HasForeignKey(n => n.CommentId)
             .OnDelete(DeleteBehavior.Cascade);
     }
 }

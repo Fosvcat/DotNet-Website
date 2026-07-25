@@ -48,6 +48,9 @@ namespace Geekspace.Controllers
             var usersDict = await _context.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown");
+            var emailsDict = await _context.Users
+                .Where(u => userIds.Contains(u.Id))
+                .ToDictionaryAsync(u => u.Id, u => u.Email ?? "Unknown");
 
             // Determine which comments can be deleted by current user
             var canDeleteDict = new System.Collections.Generic.Dictionary<int, bool>();
@@ -83,6 +86,7 @@ namespace Geekspace.Controllers
 
             // Store data in ViewBag for the view
             ViewBag.UserNames = usersDict;
+            ViewBag.UserEmails = emailsDict;
             ViewBag.CanDeleteDict = canDeleteDict;
             ViewBag.CurrentUserId = currentUserId;
             ViewBag.IsRoot = isRoot;

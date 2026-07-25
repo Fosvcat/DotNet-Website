@@ -24,10 +24,12 @@
 }
 else
 {
+    <div class="table-card">
     <table class="table">
         <thead>
             <tr>
                 <th>User</th>
+                <th>Email</th>
                 <th>Resource</th>
                 <th>Comment</th>
                 <th>Posted</th>
@@ -35,13 +37,18 @@ else
             </tr>
         </thead>
         <tbody>
+            @{
+    var userEmails = ViewBag.UserEmails as System.Collections.Generic.Dictionary<string, string> ?? new Dictionary<string, string>();
+}
             @foreach (var comment in Model)
             {
                 var userName = userNames.ContainsKey(comment.UserId) ? userNames[comment.UserId] : "Deleted accounts";
+                var userEmail = userEmails.ContainsKey(comment.UserId) ? userEmails[comment.UserId] : "Deleted accounts";
                 var canDelete = canDeleteDict.ContainsKey(comment.Id) && canDeleteDict[comment.Id];
                 
                 <tr>
                     <td>@userName</td>
+                    <td>@userEmail</td>
                     <td>
                         @if (comment.LearningResource != null)
                         {
@@ -74,4 +81,5 @@ else
             }
         </tbody>
     </table>
+    </div>
 }

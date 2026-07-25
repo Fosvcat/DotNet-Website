@@ -1,0 +1,98 @@
+@model List<Geekspace.Models.Notification>
+@using Geekspace.Models
+
+@{
+    ViewData["Title"] = "Notifications";
+    var actorNames = ViewBag.ActorNames as Dictionary<string, string> ?? new Dictionary<string, string>();
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+    <h1 class="fw-bold mb-0">Notifications</h1>
+    <div class="d-flex gap-2">
+        <form asp-action="MarkAllRead" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-sm btn-outline-secondary">Read All</button>
+        </form>
+        <form asp-action="DeleteAll" method="post" class="d-inline" onsubmit="return confirm('Delete all notifications?');">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-sm btn-outline-danger">Delete All</button>
+        </form>
+    </div>
+</div>
+
+<!-- Hidden token source for the "Read" button's fetch() call in site.js -->
+<form id="antiForgeryTokenForm" style="display:none;">
+    @Html.AntiForgeryToken()
+</form>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">You have no notifications yet.</p>
+}
+else
+{
+    <div class="table-card">
+        <table class="table mb-0">
+            <tbody>
+                @foreach (var notification in Model)
+                {
+                    string viewUrl = notification.Comment?.LearningResourceId != null
+                        ? Url.Action("Details", "Resource", new { id = notification.Comment.LearningResourceId }) + "#comment-" + notification.CommentId
+                        : Url.Action("Index", "Forum") + "#comment-" + notification.CommentId;
+
+                    <tr id="notification-row-@notification.Id">
+                        <td style="width: 24px;">
+                            @if (!notification.IsRead)
+                            {
+                                <span class="unread-dot"></span>
+                            }
+                        </td>
+                        <td>@(actorNames.ContainsKey(notification.ActorUserId) ? actorNames[notification.ActorUserId] : "Unknown")</td>
+                        <td>
+                            @if (notification.Type == NotificationType.Reply)
+                            {
+                                <text>Replied to you</text>
+                            }
+                            else if (notification.Type == NotificationType.Like)
+                            {
+                                <svg class="notif-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+                                    <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
+                                </svg>
+                                <text>to your comment</text>
+                            }
+                            else
+                            {
+                                <svg class="notif-icon" viewBox="0 0 24 24" width="16" height="16" style="transform: rotate(180deg);" aria-hidden="true">
+                                    <path d="M2 20h3V9H2v11zm19-9.5c0-.83-.67-1.5-1.5-1.5H14l1-4.5c.06-.28 0-.57-.16-.8L14.1 3 8.55 8.55c-.35.35-.55.83-.55 1.33V19c0 .83.67 1.5 1.5 1.5h7.19c.61 0 1.16-.37 1.39-.94l2.75-6.42c.13-.29.19-.6.19-.92v-1.72z" />
+                                </svg>
+                                <text>to your comment</text>
+                            }
+                        </td>
+                        <td>
+                            @if (notification.Comment?.LearningResource != null)
+                            {
+                                <a asp-controller="Resource" asp-action="Details" asp-route-id="@notification.Comment.LearningResourceId">@notification.Comment.LearningResource.Title</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Forum" asp-action="Index">Forum</a>
+                            }
+                        </td>
+                        <td class="text-muted">@notification.CreatedDate.ToString("g")</td>
+                        <td class="text-end">
+                            <a href="@viewUrl" class="btn btn-sm btn-outline-primary">View</a>
+                            @if (!notification.IsRead)
+                            {
+                                <button type="button" class="btn btn-sm btn-outline-secondary mark-read-btn" data-notification-id="@notification.Id">Read</button>
+                            }
+                            <form asp-action="Delete" asp-route-id="@notification.Id" method="post" class="d-inline" onsubmit="return confirm('Delete this notification?');">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -41,12 +41,20 @@ namespace Geekspace.Controllers
                 list.Add(new UserListItem
                 {
                     Id = u.Id,
+                    UserName = u.UserName ?? "(no username)",
                     Email = u.Email ?? "(no email)",
                          Role = await GetRoleAsync(u)
                 });
             }
 
-            return View(list.OrderBy(u => u.Email).ToList());
+            // Root always sits at the very top of the table, everyone
+            // else sorted alphabetically by email underneath.
+            var ordered = list
+                .OrderByDescending(u => u.Role == "Root")
+                .ThenBy(u => u.Email)
+                .ToList();
+
+            return View(ordered);
         }
 
         // POST: UserManagement/PromoteToAdmin/{id}

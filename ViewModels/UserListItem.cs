@@ -6,6 +6,7 @@ namespace Geekspace.ViewModels
     public class UserListItem
     {
         public string Id { get; set; } = string.Empty;
+        public string UserName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
 
         // "Root", "Admin", or "User"

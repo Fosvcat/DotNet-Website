@@ -365,10 +365,11 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nezrqnk58p-{0}-muycvpuwrr-muycvpuwrr.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/v0zgfp0y55-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/yfc7ypekbg-{0}-mlv21k5csn-mlv21k5csn.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nsns4u3rwy-{0}-pdsab67kxg-pdsab67kxg.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ta4ezbw913-{0}-61n19gt1b8-61n19gt1b8.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/6pw2y69m2w-{0}-61n19gt1b8-61n19gt1b8.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/nsns4u3rwy-{0}-a0tkqq8162-a0tkqq8162.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ta4ezbw913-{0}-9o5sk5w0i6-9o5sk5w0i6.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ysyshwwgda-{0}-jj8dlxsm6k-jj8dlxsm6k.gz
-/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/q9kufuxq7s-{0}-rrrdxn6gec-rrrdxn6gec.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/q9kufuxq7s-{0}-a8v30l7vwz-a8v30l7vwz.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/seuwyad2ud-{0}-bqjiyaj88i-bqjiyaj88i.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/36icsfykfr-{0}-c2jlpeoesf-c2jlpeoesf.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/0aq9de9lio-{0}-erw9l3u2r3-erw9l3u2r3.gz
@@ -430,6 +431,7 @@
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/fewmfp783d-{0}-87fc7y1x7t-87fc7y1x7t.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/sc7jd4tfzj-{0}-jfsiqqwiad-jfsiqqwiad.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ac4wbpuor2-{0}-h5gslb8p3n-h5gslb8p3n.gz
+/home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ldn4ucah5z-{0}-mag77t3adl-mag77t3adl.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/ulqszi6ld3-{0}-9ywpewdo71-9ywpewdo71.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/compressed/4pu6ueruru-{0}-9ywpewdo71-9ywpewdo71.gz
 /home/fosvcat/Projects/GitHub/DotNet-Website/obj/Debug/net10.0/staticwebassets.build.json

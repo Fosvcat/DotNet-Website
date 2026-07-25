@@ -11,9 +11,11 @@
     <div class="alert alert-danger">@TempData["UserManagementError"]</div>
 }
 
+<div class="table-card">
 <table class="table">
     <thead>
         <tr>
+            <th>User</th>
             <th>Email</th>
             <th>Role</th>
             <th>Actions</th>
@@ -23,6 +25,7 @@
         @foreach (var u in Model)
         {
             <tr>
+                <td>@u.UserName</td>
                 <td>@u.Email</td>
                 <td>
                     <span class="badge @(u.Role == "Root" ? "bg-danger" : u.Role == "Admin" ? "bg-warning text-dark" : "bg-secondary")">
@@ -32,7 +35,8 @@
                 <td>
                     @if (u.Role == "User")
                     {
-                        <form asp-action="PromoteToAdmin" asp-route-id="@u.Id" method="post" class="d-inline">
+                        <form asp-action="PromoteToAdmin" asp-route-id="@u.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Promote this user to Admin?');">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-sm btn-success">Promote to Admin</button>
                         </form>
@@ -40,7 +44,8 @@
 
                     @if (u.Role == "Admin" && User.IsInRole("Root"))
                     {
-                        <form asp-action="DemoteToUser" asp-route-id="@u.Id" method="post" class="d-inline">
+                        <form asp-action="DemoteToUser" asp-route-id="@u.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('Demote this Admin back to a regular user?');">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-sm btn-warning">Demote to User</button>
                         </form>
@@ -63,3 +68,4 @@
         }
     </tbody>
 </table>
+</div>
