@@ -1,0 +1,76 @@
+@model Geekspace.Models.LearningResource
+@using Geekspace.ViewModels
+
+@{
+    var downloads = ResourceReadingExtras.For(Model.Title).ToList();
+    var extension = System.IO.Path.GetExtension(Model.MediaUrl ?? string.Empty).ToLowerInvariant();
+    var displayMediaExtensions = new[]
+    {
+        ".mp4", ".webm", ".ogg", ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"
+    };
+
+    if (!string.IsNullOrWhiteSpace(Model.MediaUrl) && !displayMediaExtensions.Contains(extension))
+    {
+        downloads.Add(new ResourceDownload(
+            System.IO.Path.GetFileNameWithoutExtension(Model.MediaUrl),
+            "Download the supporting file supplied by the article author.",
+            Model.MediaUrl,
+            extension.TrimStart('.').ToUpperInvariant()));
+    }
+}
+
+<footer class="resource-reading-footer">
+    @if (downloads.Count > 0)
+    {
+        <section class="resource-downloads" aria-labelledby="resource-downloads-title">
+            <div class="resource-footer-heading">
+                <span>Take it with you</span>
+                <h2 id="resource-downloads-title">Downloads</h2>
+            </div>
+            <div class="resource-download-list">
+                @foreach (var download in downloads)
+                {
+                    <a href="@download.Url" download class="resource-download-card">
+                        <span class="resource-download-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M12 3v12M7 10l5 5 5-5M5 20h14"></path>
+                            </svg>
+                        </span>
+                        <span class="resource-download-copy">
+                            <strong>@download.Title</strong>
+                            <small>@download.Description</small>
+                        </span>
+                        <span class="resource-download-format">@download.Format</span>
+                    </a>
+                }
+            </div>
+        </section>
+    }
+
+    <section class="resource-share-panel" aria-labelledby="resource-share-title">
+        <div>
+            <span>Continue the conversation</span>
+            <h2 id="resource-share-title">Share this resource</h2>
+            <p>Send the current article to a teammate or copy a direct link.</p>
+        </div>
+        <div class="resource-share-actions">
+            <button type="button" class="resource-share-btn resource-share-primary"
+                    data-share-page data-share-title="@Model.Title">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <path d="m8.6 10.5 6.8-4M8.6 13.5l6.8 4"></path>
+                </svg>
+                Share
+            </button>
+            <button type="button" class="resource-share-btn" data-copy-link>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 15 15 9M7.5 18H6a4 4 0 0 1 0-8h3M16.5 6H18a4 4 0 0 1 0 8h-3"></path>
+                </svg>
+                Copy link
+            </button>
+        </div>
+        <p class="resource-share-status" data-share-status aria-live="polite"></p>
+    </section>
+</footer>

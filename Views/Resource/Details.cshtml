@@ -19,49 +19,10 @@ else if (ProfessionalResourceCatalog.Contains(Model.Title))
 }
 else
 {
-    <article>
-        <header class="mb-3">
-            <h1 class="fw-bold display-6">@Model.Title</h1>
-            <p class="fs-5 text-muted mb-2">@Model.Type</p>
-            <p class="small text-muted mb-0">
-                <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
-                <span class="mx-2">&middot;</span>
-                <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
-            </p>
-        </header>
-
-        <hr />
-
-        @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
-        {
-            var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
-            var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
-
-            <div class="mb-4">
-                @if (videoExtensions.Contains(extension))
-                {
-                    <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
-                        <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
-                        Your browser does not support the video tag.
-                    </video>
-                }
-                else
-                {
-                    <figure class="figure">
-                        <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
-                        <figcaption class="figure-caption">@Model.Title</figcaption>
-                    </figure>
-                }
-            </div>
-        }
-
-        <div class="p-3 mb-4 border rounded bg-body-tertiary">
-            @Model.Description
-        </div>
-
-        <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
-    </article>
+    <partial name="_MarkdownResourceArticle" model="Model" />
 }
+
+<partial name="_ResourceReadingActions" model="Model" />
 
 <div class="@(hasProfessionalLayout ? "python-community-shell" : "")">
 <div class="site-page-actions mt-4 mb-2">

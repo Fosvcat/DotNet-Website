@@ -10,7 +10,59 @@ document.addEventListener('DOMContentLoaded', function () {
     initHeroTypewriter();
     initThemeAmbientBackground();
     initSecurityKnowledgeCheck();
+    initResourceSharing();
 });
+
+function initResourceSharing() {
+    document.querySelectorAll('.resource-share-panel').forEach(function (panel) {
+        var shareButton = panel.querySelector('[data-share-page]');
+        var copyButton = panel.querySelector('[data-copy-link]');
+        var status = panel.querySelector('[data-share-status]');
+
+        function setStatus(message) {
+            if (status) {
+                status.textContent = message;
+            }
+        }
+
+        async function copyCurrentLink() {
+            try {
+                await navigator.clipboard.writeText(window.location.href);
+                setStatus('Link copied to clipboard.');
+            } catch {
+                setStatus('Copy failed. Select the address from your browser instead.');
+            }
+        }
+
+        if (shareButton) {
+            shareButton.addEventListener('click', async function () {
+                var title = shareButton.getAttribute('data-share-title') || document.title;
+
+                if (!navigator.share) {
+                    await copyCurrentLink();
+                    return;
+                }
+
+                try {
+                    await navigator.share({
+                        title: title,
+                        text: 'Explore this Geekspace learning resource.',
+                        url: window.location.href
+                    });
+                    setStatus('Resource shared.');
+                } catch (error) {
+                    if (error && error.name !== 'AbortError') {
+                        setStatus('Sharing was unavailable. You can copy the link instead.');
+                    }
+                }
+            });
+        }
+
+        if (copyButton) {
+            copyButton.addEventListener('click', copyCurrentLink);
+        }
+    });
+}
 
 function initSecurityKnowledgeCheck() {
     var quiz = document.querySelector('[data-security-quiz]');

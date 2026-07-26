@@ -1,0 +1,106 @@
+@model Geekspace.Models.LearningResource
+@using Geekspace.ViewModels
+
+@{
+    var markdown = ViewBag.MarkdownArticle as MarkdownArticleViewModel
+        ?? new MarkdownArticleViewModel("<p>No article content has been published yet.</p>", [], 1, 0);
+    var extension = System.IO.Path.GetExtension(Model.MediaUrl ?? string.Empty).ToLowerInvariant();
+    var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
+    var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg" };
+    var isVideo = videoExtensions.Contains(extension);
+    var isImage = imageExtensions.Contains(extension);
+}
+
+<article class="python-security-article markdown-learning-article">
+    <header class="python-article-hero">
+        <div class="python-article-kicker">
+            <span class="python-article-kicker-mark" aria-hidden="true"></span>
+            <span>Geekspace Learning Resource</span>
+            <span class="python-article-version">@Model.Type</span>
+        </div>
+
+        <h1>@Model.Title</h1>
+        <p class="python-article-lead">@Model.Description</p>
+
+        <div class="python-article-meta" aria-label="Article information">
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 5.5h16v13H4zM8 3v5M16 3v5M4 9h16"></path>
+                </svg>
+                @Model.CreatedDate.ToString("dd MMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="12" cy="12" r="8"></circle>
+                    <path d="M12 8v4l3 2"></path>
+                </svg>
+                @markdown.ReadingMinutes min read
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M5 4h14v16H5zM8 8h8M8 12h8M8 16h5"></path>
+                </svg>
+                @(Model.Category?.Name ?? "Uncategorized")
+            </span>
+            <span>
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M4 18V9M10 18V5M16 18v-7M22 18H2"></path>
+                </svg>
+                @markdown.WordCount words
+            </span>
+        </div>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.MediaUrl) && (isVideo || isImage))
+    {
+        <section class="python-article-visual">
+            <figure>
+                <div class="python-article-image-frame @(isVideo ? "professional-video-frame" : "")">
+                    @if (isVideo)
+                    {
+                        <video controls preload="metadata" aria-label="@Model.Title media">
+                            <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
+                            Your browser does not support the video tag.
+                        </video>
+                    }
+                    else
+                    {
+                        <img src="@Model.MediaUrl" alt="@Model.Title illustration" loading="eager" />
+                    }
+                </div>
+                <figcaption>
+                    <span class="python-caption-label">Article media</span>
+                    Supporting media for @Model.Title
+                </figcaption>
+            </figure>
+        </section>
+    }
+
+    <div class="python-reading-layout markdown-reading-layout">
+        <aside class="python-article-toc" aria-label="On this page">
+            <p>On this page</p>
+            @if (markdown.Headings.Count > 0)
+            {
+                <nav>
+                    @foreach (var heading in markdown.Headings)
+                    {
+                        <a href="#@heading.Id" class="@(heading.Level == 3 ? "toc-level-3" : "")">
+                            <span>@(heading.Level == 2 ? "§" : "·")</span>
+                            @heading.Text
+                        </a>
+                    }
+                </nav>
+            }
+            else
+            {
+                <div class="python-toc-note">
+                    <span>Add <code>##</code> headings in the editor to generate this table of contents.</span>
+                </div>
+            }
+        </aside>
+
+        <div class="python-article-body markdown-article-body">
+            @Html.Raw(markdown.Html)
+        </div>
+    </div>
+</article>

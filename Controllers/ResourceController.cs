@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Geekspace.Data;
 using Geekspace.Models;
+using Geekspace.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
@@ -16,11 +17,16 @@ namespace Geekspace.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly MarkdownContentRenderer _markdownRenderer;
 
-        public ResourceController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public ResourceController(
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
+            MarkdownContentRenderer markdownRenderer)
         {
             _context = context;
             _userManager = userManager;
+            _markdownRenderer = markdownRenderer;
         }
 
         // GET: Resource
@@ -118,6 +124,7 @@ namespace Geekspace.Controllers
             {
                 return NotFound();
             }
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", learningResource.CategoryId);
             return View(learningResource);
         }
@@ -177,6 +184,8 @@ namespace Geekspace.Controllers
             {
                 return NotFound();
             }
+
+            ViewBag.MarkdownArticle = _markdownRenderer.Render(learningResource.Content);
 
             // Build a lookup of user id -> display name so the view can show
             // who posted each comment without an extra navigation property.

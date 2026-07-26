@@ -24,7 +24,9 @@
             </div>
             <div class="form-group">
                 <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control"></textarea>
+                <textarea asp-for="Content" class="form-control font-monospace" rows="12"
+                          placeholder="## Section title&#10;&#10;Write **bold text**, lists, links, tables and fenced code blocks in Markdown."></textarea>
+                <small class="form-text text-muted">Markdown is supported. Use ## and ### headings to generate the article table of contents automatically.</small>
                 <span asp-validation-for="Content" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -35,7 +37,7 @@
             <div class="form-group">
                 <label asp-for="MediaUrl" class="control-label"></label>
                 <input asp-for="MediaUrl" class="form-control" placeholder="/media/videos/example.mp4 or /media/images/example.jpg" />
-                <small style="color:#6c757d;">Enter a relative path under wwwroot, e.g. /media/images/ctf-banner.jpg</small>
+                <small style="color:#6c757d;">Images and videos are displayed in the article. Other file types are offered as downloads.</small>
                 <span asp-validation-for="MediaUrl" class="text-danger"></span>
             </div>
             <div class="form-group">
